@@ -1,140 +1,1562 @@
 [
-    { "id": 1, "q": "Nowadays, the usage of classical feature extraction and data analysis methods is outdated since the capability of the recent deep learning models and methods made them obsolete and not more present in the common practice", "options": ["True", "False"], "correct": 1 },
-    { "id": 2, "q": "Artificial Intelligence can be applied to the following sectors", "options": ["Robotics", "Information Extraction", "All the above"], "correct": 2 },
-    { "id": 3, "q": "Artificial neural networks are capable to learn human biases", "options": ["False: the achievable complexity of the artificial neural networks is so far from the complexity of the human brain to make impossible to mimic this characteristic", "False: human biases are not reproducible nor measurable", "True"], "correct": 2 },
-    { "id": 4, "q": "Recent artificial intelligence models can solve analogy puzzles", "options": ["False", "True"], "correct": 1 },
-    { "id": 5, "q": "Considering the \"Data knowledge spectrum plot\" discussed in class, the minimum amount of data required is in the following case.", "options": ["No knowledge about the model generating the data is available", "A statistical model of the process is available", "A mathematical model of the process is available"], "correct": 2 },
-    { "id": 6, "q": "It is possible to think to the single datum in input to the neural network as a point in the \"input space\" of the model, even if the input is a single value, a N dimensional vector, or an image", "options": ["True", "False"], "correct": 0 },
-    { "id": 7, "q": "It is correct to say the one of the key features of an intelligent artificial system is the capability to learn (even if only a limited sense) and/or get better in time", "options": ["True", "False"], "correct": 0 },
-    { "id": 8, "q": "According to the Andries Engelbrecht definition of Computational intelligence what of the following is not included?", "options": ["Artificial Neural Networks", "Evolutionary Computing", "Swarm Intelligence", "Artificial immune system", "Fuzzy Systems", "All the above are included"], "correct": 5 },
-    { "id": 9, "q": "According to the class discussion of the Gestalt capability, what of the following sentences is more correct?", "options": ["The Gestalt capability is a typical feature present by-design in the model of classical neural networks", "The Gestalt capability is a typical feature present by-design in the model of deep learning neural networks", "The Gestalt capability is a typical human feature not well (yet) mimicked in current artificial networks"], "correct": 2 },
-    { "id": 10, "q": "The following activity: Data Selection, Data Filtering, Data Enhancing", "options": ["Are part of the job of the artificial intelligent specialist in normal activities", "Contribute to keep lower the complexity of the learning task", "All the above", "Are part of the classical machine learning approaches and they are (correctly)"], "correct": 2 },
-    { "id": 11, "q": "The Mean Squared Error is typically present in what step of the design", "options": ["Representation", "Evaluation"], "correct": 1 },
-    { "id": 12, "q": "Considering IoT devices as source of data for external intelligent systems (IS is not intended to be embedded into the loT device), what kind of loT devices can be really used?", "options": ["Passive data IoT devices", "Active data loT devices", "Dynamic data loT devices", "All of the above", "None of the above"], "correct": 3 },
-    { "id": 13, "q": "Referring to the class discussion, the (correct) design practice for neural networks considers", "options": ["Start with deep learning models since they are the cutting edge and most advanced technology that we have now", "Start with deep learning models since they are the cutting edge and most advanced technology we have now, and then use classicals method as reference", "Start with simple neural networks before to consider deep learning models"], "correct": 2 },
-    { "id": 14, "q": "The missing values can also be occupied by computing mean, mode or median of the observed given values.", "options": ["This is very unusual and not common in practice", "This is a very simple and effective solution in case the learning method is not capable to deal with missing data", "This is not possible, since that is just descriptive statistics about the features, and cannot be used to fill missing data"], "correct": 1 },
-    { "id": 15, "q": "An additional information can allow the model to learn or know something that it otherwise would not know and in turn invalidate the estimated performance of the model being constructed. This is called", "options": ["Data leakage", "Data pre-processing", "Data harmonization", "Data wrangling"], "correct": 0 },
-    { "id": 16, "q": "The degrees of freedom for a given problem are the number of independent problem variables which must be specified to uniquely determine a solution. Hence the #DoF is important to be considered", "options": ["To design the number of vectors in the learning dataset.", "To avoid overfitting problem in the model", "All the above", "None of the above"], "correct": 2 },
-    { "id": 17, "q": "About the cosine metrics it is possible to say that", "options": ["Two vectors with the same orientation have a cosine similarity of 1", "Two vectors oriented at 90° relative to each other have a similarity of 0", "All of the above", "None of the above"], "correct": 2 },
-    { "id": 18, "q": "What similarity feature/features discussed in class offers/offer the property to allow a fast comparison based on a short 1D vector of elements or bits", "options": ["phash", "ahash", "All the above", "Cross-correlation"], "correct": 2 },
-    { "id": 19, "q": "In agreement to the class discussion, which description better describes the design activity?", "options": ["Similarity in the dataset requires more space and processing time", "Similarity in the dataset can improve generalization", "Both of the above", "None of the above"], "correct": 2 },
-    { "id": 20, "q": "In agreement to the class discussion, in a dataset of 1100 labelled images, the search for duplications is typically achieved...", "options": ["by manual exploration of the dataset for better results since the number of images is not critical", "by automatic iterations > 1M comparisons", "by automatic iterations > 1000 comparisons"], "correct": 1 },
-    { "id": 21, "q": "In agreement to the class discussion, what kind of labelling error is generally the worst case for the accuracy of the generalization of the model? (ERR1=Same labels, ERR2=Different labels)", "options": ["ERR1", "ERR2", "ERR1=ERR2"], "correct": 1 },
-    { "id": 22, "q": "According to the class discussion, about the relationship between the operation of cross-correlation and convolution it is possible to say that", "options": ["They are very similar in meaning and mathematical expression", "Despite the mathematical expression is similar, the meaning and their use is completely different", "There is no specific relationship since loro different"], "correct": 0 },
-    { "id": 23, "q": "According to the class discussion, what is the characteristic of the self-correlation (O=xcor2(A,A)) map produced by a generic image?", "options": ["A flat and noisy central plateau", "An evident spike at the center with a very well-defined maximum", "Not possible to create an autocorrelation map from one single image"], "correct": 1 },
-    { "id": 24, "q": "If your data set contains extreme outliers, it better to use as preprocessing", "options": ["Feature clipping", "Min-max normalization", "Z' norm"], "correct": 0 },
-    { "id": 25, "q": "A logarithmic scaling to one feature values is typically applied in a case of", "options": ["Outliers' presence", "Negative values", "A very large range in the values (>0)"], "correct": 2 },
-    { "id": 26, "q": "According to the scientific visualization rules presented in class, if you are plotting many figures of merit obtained by your trained neural network on a new dataset, which is the correct ranking of visual attributes to be used?", "options": ["Color intensity > Hue > Length", "Area > Length > Hue", "Slope > Angle > Volume", "Hue > Area > Length"], "correct": 3 },
-    { "id": 27, "q": "According to the discussion presented in class about the data visualization, and considerando 1) Get Data, 2) Clean Data, 3) Train, 4) Test, 5) Improve, main steps where visualization involved?", "options": ["#5", "#1 and #5", "#3 and #5", "#2 and #5"], "correct": 3 },
-    { "id": 28, "q": "According to discussion about similarity, consider image A(x,y) with internal similarity. What happens to output of self-cross correlation?", "options": ["Not possible to apply", "Flat plateau with one peak", "Many peaks and one evident maximum", "Many equivalent peaks"], "correct": 2 },
-    { "id": 29, "q": "Machine Learning on CPUs offer the following advantages", "options": ["Portability and flexibility, Market availability", "Portability, flexibility, Market availability, Deployment across wide spectrum", "Portability, Deployment across wide spectrum", "Market availability, Deployment"], "correct": 1 },
-    { "id": 30, "q": "According to the class discussion, text prefiltering is often used as input for a neural network to deal with large text input", "options": ["True, hamming distance", "True, cosine distance", "True, string approximate match", "True, discrete gradient descent", "True, word embeddings technique"], "correct": 4 },
-    { "id": 31, "q": "The Inception-v3 deep learning pretrained model discussed during the course is a model for", "options": ["Post processing", "None of other", "Image Enhancing", "Image classification", "Segmentation"], "correct": 3 },
-    { "id": 32, "q": "Intelligent vision systems can achieve Semantic segmentation by", "options": ["Hybrid approach blob detection + classification", "Complete fully convolutional solution", "Hybrid approach blob detection + segmentation", "None of other"], "correct": 1 },
-    { "id": 33, "q": "An AI model processing RGB image to evaluate age. What kind of model is it?", "options": ["Classifier", "Regressor", "Clustering", "Reinforced", "None of above"], "correct": 1 },
-    { "id": 34, "q": "According to class discussion, theory of intelligent systems includes steps:", "options": ["Representation", "Representation, Evaluation", "Representation, Evaluation, Optimization", "None of other"], "correct": 2 },
-    { "id": 35, "q": "Clustering always requires supervised dataset", "options": ["Yes", "No"], "correct": 1 },
-    { "id": 36, "q": "According to class discussion, using a black box solution is:", "options": ["Bad practice for ML designer", "Used under specific circumstances", "Current good practice due to SOTA size"], "correct": 0 },
-    { "id": 37, "q": "Dataset X (1000 samples, 4 features). Reduce to 2 features. Option A: PCA. Option B: Feedforward Feature Selection.", "options": ["A not possible, B possible", "A possible, B possible", "A possible, B not possible"], "correct": 2 },
-    { "id": 38, "q": "Feature values [-5, 0, +5]. Which normalization gives [0, 0.5, 1]?", "options": ["Z-score", "Clipping", "Min-MAX", "Different type"], "correct": 2 },
-    { "id": 39, "q": "If you train feed-forward models with increasing number of neurons, which case is more probable?", "options": ["None of below", "Errors decrease indefinitely", "Training error increases", "Validation error decreases indefinitely"], "correct": 0 },
-    { "id": 40, "q": "Which partition provides lower training error but lower confidence in test results?", "options": ["Train 99%, Test 1%", "Train 75%, Test 25%", "Train 50%, Test 50%", "Train 25%, Test 75%", "Train 1%, Test 99%"], "correct": 0 },
-    { "id": 41, "q": "According to class discussion, what kind of activity can be performed on the test set?", "options": ["All below", "Mean test error estimation", "Mean test error + std deviation", "Confusion matrix test"], "correct": 0 },
-    { "id": 42, "q": "According to class discussion, what activity can be performed on the train set?", "options": ["Design # neurons", "Design # layers", "Normalization", "PCA", "All other options"], "correct": 4 },
-    { "id": 43, "q": "According to class discussion, where can feature engineering be performed?", "options": ["Only on test set", "On train + test set", "Only on different dataset", "Only on train set"], "correct": 3 },
-    { "id": 44, "q": "Which option is correct about Confusion Matrix?", "options": ["Possible to process error and vice versa", "Only for binary classification", "Possible to process classification error", "Error = sum of diagonal elements"], "correct": 2 },
-    { "id": 45, "q": "Model described by equation f(x)=sgn(w*x+b):", "options": ["Linear regressor", "Soft-max neuron", "Sigmoidal neuron", "Linear classifier", "Gradient descent", "Model parameters"], "correct": 3 },
-    { "id": 46, "q": "Definition: 'output is the label produced by the most probable classifier':", "options": ["Supervised Classifier", "K-means", "Bayes Optimal Classifier", "None of other"], "correct": 2 },
-    { "id": 47, "q": "kNN classifier, what kind of learning?", "options": ["Instance-based", "Eager", "Hard-limited", "Unsupervised", "None"], "correct": 0 },
-    { "id": 48, "q": "Classifier: not neural; deterministic; repeatability; minimum parameters; simple learning; explainability:", "options": ["Linear", "Decision Tree", "KNN", "K-means", "None"], "correct": 2 },
-    { "id": 49, "q": "In KNN, what is true about larger values of k?", "options": ["Less regularization, more complexity", "More regularization, more complexity", "Less regularization, less complexity", "More regularization, less complexity", "No relation"], "correct": 3 },
-    { "id": 50, "q": "According to class discussion on PCA:", "options": ["Vectors originate from center of mass", "Subsequent vectors are orthogonal", "All other options"], "correct": 2 },
-    { "id": 51, "q": "According to class discussion on PCA:", "options": ["Subsequent vectors are orthogonal", "Variance projection on first vectors maximized", "All other options"], "correct": 2 },
-    { "id": 52, "q": "Method: specify k in advance, unable to handle noise/outliers, not for non-convex shapes:", "options": ["K-means", "KNN", "Decision Tree", "None"], "correct": 0 },
-    { "id": 53, "q": "Backpropagation term missing: DELTAW_ij = ?? * y_j * delta_k:", "options": ["?? = input vector", "?? = alfa (> 1)", "?? = alfa (< 1)", "?? = input vector error"], "correct": 2 },
-    { "id": 54, "q": "Likely sequence of modules in CNN architecture:", "options": ["Input->Relu->Conv->MaxP->Softmax->Output", "Input->Relu->MaxP->Softmax->Conv->Output", "Input->Relu->MaxP->Conv->Softmax->Output", "Input->Conv->Relu->MaxP->Softmax->Output"], "correct": 3 },
-    { "id": 55, "q": "Traditional Segmentation methods partition in:", "options": ["Global knowledge, Edge-based", "Edge-based, Region-based", "Global knowledge, Edge-based, Region-based", "None"], "correct": 2 },
-    { "id": 56, "q": "Process images with deep learning on small USB devices?", "options": ["True: dedicated processors + USB bandwidth", "False: USB bandwidth", "False: computational complexity", "False: bandwidth + complexity"], "correct": 0 },
-    { "id": 57, "q": "What is Greedy Layer-Wise Training?", "options": ["Supervised for auto-encoders", "Supervised for feedforward", "Unsupervised for feedforward", "Unsupervised to improve auto-encoders"], "correct": 3 },
-    { "id": 58, "q": "Number of parameters in VGGNet training:", "options": ["< 100000", "> 100 Million", "1 Million", "10 Million"], "correct": 1 },
-    { "id": 59, "q": "Basic metrics in similarity: alpha * cos(A,B) equals:", "options": ["cos(alpha*A, B)", "cos(alpha*A, alpha*B)", "cos(alpha*A, B) = cos(A, alpha*B)", "alpha * cos(alpha*A, alpha*B)"], "correct": 2 },
-    { "id": 60, "q": "Worst data leakage situation:", "options": ["Training to Test", "None of other", "Test to Training (pessimistic)", "Test to Training (optimistic)"], "correct": 3 },
-    { "id": 61, "q": "Split image into regions using features/colors (ROI):", "options": ["Model training", "Post processing", "Enhancing", "Segmentation", "Feature engineering"], "correct": 3 },
-    { "id": 62, "q": "Worst labelling error case for accuracy generalization?", "options": ["ERR1 = ERR2", "ERR2 worst", "ERR1 worst", "ERR1 roughly ERR2"], "correct": 1 },
-    { "id": 63, "q": "Autocorrelation map characteristic of generic image:", "options": ["Not possible from single image", "None of other", "Flat noisy plateau", "Evident spike at center"], "correct": 3 },
-    { "id": 64, "q": "Tensor Processing Unit (TPU) is:", "options": ["Part of CNN for tensorial activation", "Unit of Arm architecture", "ASIC for neural network ML", "None"], "correct": 2 },
-    { "id": 65, "q": "F2 = [-13, 0, 1, 2, 4, 128]. Normalization giving [0, 0, 1, 2, 4, 10]?", "options": ["Z-score", "Min-MAX", "Clipping", "Different type"], "correct": 2 },
-    { "id": 66, "q": "Intelligent Vision tasks complexity:", "options": ["Instance Segmentation < Object Detection", "Instance Segmentation > Object Detection", "Similar complexity", "Not vision tasks"], "correct": 1 },
-    { "id": 67, "q": "Picture with 1 car, 5 people. Label 'humans' produced. Task?", "options": ["Instance segmentation", "Object detection", "Image classification", "Semantic segmentation"], "correct": 2 },
-    { "id": 68, "q": "Training gain of GPUs over CPUs (medium/large):", "options": ["100x perf, 10x eff", "100x perf, 5x eff", "10x perf, 5x eff", "2x perf, 2x eff"], "correct": 2 },
-    { "id": 69, "q": "Basic industrial setup for Vision:", "options": ["Smart camera + ext units + illumination", "Camera + illumination", "Camera only", "Camera + units + illumination", "Camera + units"], "correct": 3 },
-    { "id": 70, "q": "Optimization during training can optimize:", "options": ["Accuracy", "Margin", "Both"], "correct": 2 },
-    { "id": 71, "q": "EU AI regulation approach based on:", "options": ["Use cases", "Risk assessment", "Both", "None"], "correct": 2 },
-    { "id": 72, "q": "EU regulatory framework for AI mainly focused on:", "options": ["Public services", "Health apps", "Data privacy", "None of other options"], "correct": 3 },
-    { "id": 73, "q": "MAE (Mean Absolute Error) properties:", "options": ["Lower is better", "Less sensitive to outliers", "[0, +inf]", "None of other", "All other options", "mean(abs(obs - pred))"], "correct": 4 },
-    { "id": 74, "q": "AI lacking awareness, emotions, Gestalt:", "options": ["Large AI", "Reactive AI", "AGI", "Narrow AI", "None"], "correct": 3 },
-    { "id": 75, "q": "Range for MSE (Mean Squared Error):", "options": ["[-inf, +inf]", "[0, 1]", "[0, +inf]", "[-1, 1]", "None"], "correct": 2 },
-    { "id": 76, "q": "Primary advantage of Stratified k-Fold over simple k-Fold?", "options": ["Equal partition size", "Lower complexity", "Preserves class distribution", "Improves training time", "Eliminates test partitions"], "correct": 2 },
-    { "id": 77, "q": "1D linear model z=w1*x+b. Data points needed to describe model?", "options": ["4 (invertible)", "2 (parameters w1, b)", "3 (generalization)", "1 (linear)", "None"], "correct": 1 },
-    { "id": 78, "q": "In k-FCV, k represents:", "options": ["Dimensions (PCA)", "Eigenvalues", "Number of partitions", "Neighbors (k-NN)", "Annealing steps"], "correct": 2 },
-    { "id": 79, "q": "Spectrum plot: parameters tuned/fitted with limited data when:", "options": ["No a priori + huge data", "Model available + limited data", "No a priori + limited data", "Model available + huge data", "None"], "correct": 1 },
-    { "id": 80, "q": "Train feed-forward with increasing neurons. Probable case?", "options": ["None of other", "Errors decrease indefinitely", "Training error increases", "Validation error decreases indefinitely", "Validation error increases"], "correct": 4 },
-    { "id": 81, "q": "Industry 4.0 design principles:", "options": ["Interoperability, transparency, assistance, decentralized", "Interoperability, transparency, assistance, wireless", "Interoperability, transparency, assistance", "Interoperability, transparency, decentralized", "None"], "correct": 0 },
-    { "id": 82, "q": "Correct range for MAE:", "options": ["None", "[-1, 1]", "[0, +inf]", "[-inf, +inf]", "[0, 1]"], "correct": 2 },
-    { "id": 83, "q": "Capability processed onboard recent smart camera:", "options": ["Seg, Meas, Class (non-deep)", "Seg, Meas, Class (deep) + training", "Seg, Meas", "Seg, Meas, Class (deep)", "Seg, Meas, Class"], "correct": 2 },
-    { "id": 84, "q": "GoogLeNet is a model for:", "options": ["None", "Segmentation", "Post processing", "Enhancing", "Image classification"], "correct": 4 },
-    { "id": 85, "q": "Simple k-FCV procedure may:", "options": ["Local minima", "Prevent overfitting", "None", "Disarrange class proportions", "Impossible test error"], "correct": 3 },
-    { "id": 86, "q": "Why maintain balanced partition between train/test?", "options": ["Identical data", "No validation", "None", "Generalize + avoid bias", "Test > Train"], "correct": 3 },
-    { "id": 87, "q": "Adjust k in k-FCV?", "options": ["No (fixed 5/10)", "None", "No (no impact)", "Yes (match classes)", "Yes (avoid small test partition)", "No (match features)"], "correct": 4 },
-    { "id": 88, "q": "Evaluation: Regressor vs Classifier?", "options": ["No (identical)", "No (same metrics)", "Yes (Regressor uses Accuracy/Precision)", "Yes (Regressor uses MAE/MSE, Classifier uses Accuracy/Precision)", "None"], "correct": 3 },
-    { "id": 89, "q": "Leave One Person Out importance:", "options": ["Memorize data", "Faster training", "None", "Focus overfitting", "Generalize to unseen individuals"], "correct": 4 },
-    { "id": 90, "q": "Dataset used for both training and validating:", "options": ["Perform better on test", "Train error lower than test", "Generalize well", "No clue about behavior with unseen cases", "None"], "correct": 3 },
-    { "id": 91, "q": "Example of 'Divide et Impera' for unbalanced data:", "options": ["Single classifier", "Random labels", "Hierarchical classifiers", "Duplicate cases", "Remove rare cases"], "correct": 2 },
-    { "id": 92, "q": "Dividing time series a problem for k-FCV?", "options": ["None", "No (temporal doesn't affect)", "Yes (data leakage, temporal dependencies)", "Yes (solved by k-FCV)", "No (behave like any dataset)"], "correct": 2 },
-    { "id": 93, "q": "Overfitting characteristic:", "options": ["Poorly adjusted", "High error train/test", "None", "Train/test error both high", "High precision known, poor unseen"], "correct": 4 },
-    { "id": 94, "q": "R-squared metric properties:", "options": ["Higher better", "None of other", "[0,1]", "Variation explained by predictor", "All other options"], "correct": 4 },
-    { "id": 95, "q": "Search for duplications in 1100 images achieved:", "options": ["Hashing functions", "Manually", "Clustering", "Automatic 1x1 resize", "None"], "correct": 0 },
-    { "id": 96, "q": "Why aggregate values in k-FCV?", "options": ["Summarize performance", "Lowest error fold", "None", "Identify important fold", "Not necessary"], "correct": 0 },
-    { "id": 97, "q": "Transduction in ML context:", "options": ["New function unseen", "None", "Derive values given function", "Derive values unknown function from data", "Derive function from data"], "correct": 3 },
-    { "id": 98, "q": "Design activities on test data?", "options": ["Yes (refine)", "Yes (ensure)", "No (generalization only)", "Yes (after observing)"], "correct": 2 },
-    { "id": 99, "q": "Unbalanced dataset example:", "options": ["Credit (balanced)", "None", "Medical (balanced healthy/unhealthy)", "Medical (mostly healthy, few disease)", "Credit (mostly default)"], "correct": 3 },
-    { "id": 100, "q": "Underfitting characteristic:", "options": ["High precision known", "Well train, poor test", "High error train + test", "None", "Tightly adjusted"], "correct": 2 },
-    { "id": 101, "q": "Metric TP / (TP + FN):", "options": ["Recall", "Specificity", "Precision", "None", "Accuracy"], "correct": 0 },
-    { "id": 102, "q": "Supervised learning algorithm example:", "options": ["None", "k-means", "PCA", "Apriori", "Linear regression"], "correct": 4 },
-    { "id": 103, "q": "Parameters in fully connected (10 in, 10 hidden, 1 out):", "options": ["100", "121", "101", "300", "10", "More than 300"], "correct": 1 },
-    { "id": 104, "q": "Practice preventing Data Leakage:", "options": ["All data in train", "Separate features/target + no test info in train", "None", "Fewer features", "Higher complexity"], "correct": 1 },
-    { "id": 105, "q": "Outcome of Data Leakage:", "options": ["Perfect generalization", "Fails to generalize", "Additional features", "Too simple", "None"], "correct": 1 },
-    { "id": 106, "q": "Parameters in fully connected (2 in, 2 hidden, 1 out):", "options": ["12", "8", "6", "9", "None"], "correct": 3 },
-    { "id": 107, "q": "Handling unbalanced data using 'Change labelling':", "options": ["Original labels", "Uniform sampling", "Merge rare into categories", "Duplicate cases", "Ignore rare"], "correct": 2 },
-    { "id": 108, "q": "Random partition (A/B), reversal + 5 repetitions:", "options": ["None", "LOO", "Bagging", "K-Fold", "Monte Carlo"], "correct": 3 },
-    { "id": 109, "q": "Data Leakage scenario:", "options": ["Cross-validation", "None", "Features derived from target", "Scaling on train", "Balanced dataset"], "correct": 2 },
-    { "id": 110, "q": "Worst leakage case?", "options": ["Test-to-Training", "Training-to-Test", "Similar small impact", "Similar strong impact"], "correct": 0 },
-    { "id": 111, "q": "NLP tasks considered transduction problems because:", "options": ["Converts string to string", "Derives function", "None", "Predicts no input", "Generates unseen"], "correct": 0 },
-    { "id": 112, "q": "Data Leakage scenario:", "options": ["Random info", "Not normalized", "None", "Critical feature not in train but in test", "Split properly"], "correct": 3 },
-    { "id": 113, "q": "Correct predictions and errors in Confusion Matrix:", "options": ["Errors diagonal", "Errors borders", "Errors alternate", "Correct diagonal, Errors off", "None"], "correct": 3 },
-    { "id": 114, "q": "Plot confidence level of figure of merit (accuracy)?", "options": ["Yes (diff units)", "No (same units)", "Yes (same units, same plot)"], "correct": 2 },
-    { "id": 115, "q": "NET1 (Excessive DoF) vs NET2 (Balanced DoF):", "options": ["NET1 higher generalization error (overfitting)", "None", "NET1 better", "NET2 higher error (underfitting)", "Equal"], "correct": 0 },
-    { "id": 116, "q": "Leave One Person Out importance in:", "options": ["Balanced images", "SOTA benchmarks", "Biometrics/Medical", "Speech"], "correct": 2 },
-    { "id": 117, "q": "Solution for unbalanced datasets:", "options": ["Random oversampling", "Collect more data", "Uniform sampling", "Increase weight rare class loss", "Ignore rare"], "correct": 2 },
-    { "id": 118, "q": "Degrees of Freedom (DoF) refer to:", "options": ["Train/test diff", "Independent variables/parameters", "None", "# features", "Total data"], "correct": 1 },
-    { "id": 119, "q": "Cosine metrics:", "options": ["All other options", "90 deg = 0", "Angular displacement only", "Same orient = 1"], "correct": 0 },
-    { "id": 120, "q": "Leave One Out (LOO) suitable for:", "options": ["Equal for both", "None", "Large datasets", "Learning method only", "Small datasets"], "correct": 4 },
-    { "id": 121, "q": "Receiver Operating Characteristic (ROC) curve represents:", "options": ["None", "Matrix specific threshold", "Precision-Recall plot", "TPR vs FPR plot", "Single summary number"], "correct": 3 },
-    { "id": 122, "q": "Train data overly large compared to test (unbalanced):", "options": ["Test zero", "Perfect generalization", "None", "Train lower than test", "Lacks confidence in generalization"], "correct": 4 },
-    { "id": 123, "q": "Input space of intelligent systems:", "options": ["Single datum = point in input space", "Single datum = N points", "Not possible point (N>2)", "Only for linear classifiers"], "correct": 0 },
-    { "id": 124, "q": "Misclassification Rate formula:", "options": ["(TP + TN) / N", "(FP + TP) / N", "None", "(FP + FN) / N", "(FN + TN) / N"], "correct": 3 },
-    { "id": 125, "q": "Algorithm NOT supervised learning:", "options": ["Regressor", "None", "K-means", "Linear regression", "Classifier"], "correct": 2 },
-    { "id": 126, "q": "Purpose of aggregating test values in k-FCV:", "options": ["Overall metric", "None", "Select best fold", "Discard folds", "Optimize features"], "correct": 0 },
-    { "id": 127, "q": "Reasoning: k-NN, linguistic translation, sequence prediction:", "options": ["None", "Transduction", "Deduction", "Induction"], "correct": 1 },
-    { "id": 128, "q": "NLP models reasoning approach:", "options": ["Transduction", "None", "Deduction", "Induction"], "correct": 0 },
-    { "id": 129, "q": "Classical feature extraction methods outdated?", "options": ["True", "False (Study/Validate data)", "False (Greedy Lazy)"], "correct": 1 },
-    { "id": 130, "q": "Purpose of stratified k-FCV:", "options": ["Minority classes test only", "Maximize training", "Random shuffle", "Maintain class distributions"], "correct": 3 },
-    { "id": 131, "q": "Simple k-FCV disarrange portions from each class?", "options": ["Yes (balanced)", "No (unrelated)", "Yes (may disarrange)", "No (always preserves)"], "correct": 1 },
-    { "id": 132, "q": "Artificial neural networks incapable to learn human biases:", "options": ["True (Gestalt)", "True (Brain complexity)", "False"], "correct": 2 },
-    { "id": 133, "q": "Dataset divided into 3 groups (1 test, 2 train). Repetitive. Approach?", "options": ["Stratification", "PCA", "Clustering", "3-fold CV", "Pruning"], "correct": 3 },
-    { "id": 134, "q": "Correct 3-fold CV approach:", "options": ["3 groups (each test once)", "None", "3 groups (50/50)", "3 groups (all simultaneous)", "3 groups (only one used)"], "correct": 0 },
-    { "id": 135, "q": "Data Leakage in image dataset:", "options": ["Unrelated features (color/size) used", "Split train/test", "Augmentation inconsistency", "Normalization", "None"], "correct": 0 },
-    { "id": 136, "q": "Calculate mean and std errors in k-FCV?", "options": ["No (only std)", "No (not possible)", "No (only mean)", "Yes (both)", "No (one value only)"], "correct": 3 },
-    { "id": 137, "q": "Assessment of image classifier include:", "options": ["Noise/flipped class", "None", "Change relevant parts", "All other options", "Saliency maps"], "correct": 3 },
-    { "id": 138, "q": "DoF (rule of thumb) in fully connected:", "options": ["Weights hidden", "Features + Weights", "Features", "All other", "Vectors in train"], "correct": 0 }
+    {
+        "id": 1,
+        "q": "Nowadays, the usage of classical feature extraction and data analysis methods is outdated since the capability of the recent deep learning models and methods made them obsolete and not more present in the common practice",
+        "options": [
+            "True",
+            "False"
+        ],
+        "correct": 1
+    },
+    {
+        "id": 2,
+        "q": "Artificial Intelligence can be applied to the following sectors",
+        "options": [
+            "Robotics",
+            "Information Extraction",
+            "All the above"
+        ],
+        "correct": 2
+    },
+    {
+        "id": 3,
+        "q": "Artificial neural networks are capable to learn human biases",
+        "options": [
+            "False: the achievable complexity of the artificial neural networks is so far from the complexity of the human brain to make impossible to mimic this characteristic",
+            "False: human biases are not reproducible nor measurable",
+            "True"
+        ],
+        "correct": 2
+    },
+    {
+        "id": 4,
+        "q": "Recent artificial intelligence models can solve analogy puzzles",
+        "options": [
+            "False",
+            "True"
+        ],
+        "correct": 1
+    },
+    {
+        "id": 5,
+        "q": "Considering the \"Data knowledge spectrum plot\" discussed in class, the minimum amount of data required is in the following case.",
+        "options": [
+            "No knowledge about the model generating the data is available",
+            "A statistical model of the process is available",
+            "A mathematical model of the process is available"
+        ],
+        "correct": 2
+    },
+    {
+        "id": 6,
+        "q": "It is possible to think to the single datum in input to the neural network as a point in the \"input space\" of the model, even if the input is a single value, a N dimensional vector, or an image",
+        "options": [
+            "True",
+            "False"
+        ],
+        "correct": 0
+    },
+    {
+        "id": 7,
+        "q": "It is correct to say the one of the key features of an intelligent artificial system is the capability to learn (even if only a limited sense) and/or get better in time",
+        "options": [
+            "True",
+            "False"
+        ],
+        "correct": 0
+    },
+    {
+        "id": 8,
+        "q": "According to the Andries Engelbrecht definition of Computational intelligence what of the following is not included?",
+        "options": [
+            "Artificial Neural Networks",
+            "Evolutionary Computing",
+            "Swarm Intelligence",
+            "Artificial immune system",
+            "Fuzzy Systems",
+            "All the above are included"
+        ],
+        "correct": 5
+    },
+    {
+        "id": 9,
+        "q": "According to the class discussion of the Gestalt capability, what of the following sentences is more correct?",
+        "options": [
+            "The Gestalt capability is a typical feature present by-design in the model of classical neural networks",
+            "The Gestalt capability is a typical feature present by-design in the model of deep learning neural networks",
+            "The Gestalt capability is a typical human feature not well (yet) mimicked in current artificial networks"
+        ],
+        "correct": 2
+    },
+    {
+        "id": 10,
+        "q": "The following activity: Data Selection, Data Filtering, Data Enhancing",
+        "options": [
+            "Are part of the job of the artificial intelligent specialist in normal activities",
+            "Contribute to keep lower the complexity of the learning task",
+            "All the above",
+            "Are part of the classical machine learning approaches and they are (correctly)"
+        ],
+        "correct": 2
+    },
+    {
+        "id": 11,
+        "q": "The Mean Squared Error is typically present in what step of the design",
+        "options": [
+            "Representation",
+            "Evaluation"
+        ],
+        "correct": 1
+    },
+    {
+        "id": 12,
+        "q": "Considering IoT devices as source of data for external intelligent systems (IS is not intended to be embedded into the IoT device), what kind of IoT devices can be really used?",
+        "options": [
+            "Passive data IoT devices",
+            "Active data IoT devices",
+            "Dynamic data IoT devices",
+            "All of the above",
+            "None of the above"
+        ],
+        "correct": 3
+    },
+    {
+        "id": 13,
+        "q": "Referring to the class discussion, the (correct) design practice for neural networks considers",
+        "options": [
+            "Start with deep learning models since they are the cutting edge and most advanced technology that we have now",
+            "Start with deep learning models since they are the cutting edge and most advanced technology we have now, and then use classicals method as reference",
+            "Start with simple neural networks before to consider deep learning models"
+        ],
+        "correct": 2
+    },
+    {
+        "id": 14,
+        "q": "The missing values can also be occupied by computing mean, mode or median of the observed given values.",
+        "options": [
+            "This is very unusual and not common in practice",
+            "This is a very simple and effective solution in case the learning method is not capable to deal with missing data",
+            "This is not possible, since that is just descriptive statistics about the features, and cannot be used to fill missing data"
+        ],
+        "correct": 1
+    },
+    {
+        "id": 15,
+        "q": "An additional information can allow the model to learn or know something that it otherwise would not know and in turn invalidate the estimated performance of the model being constructed. This is called",
+        "options": [
+            "Data leakage",
+            "Data pre-processing",
+            "Data harmonization",
+            "Data wrangling"
+        ],
+        "correct": 0
+    },
+    {
+        "id": 16,
+        "q": "The degrees of freedom for a given problem are the number of independent problem variables which must be specified to uniquely determine a solution. Hence the #DoF is important to be considered",
+        "options": [
+            "To design the number of vectors in the learning dataset.",
+            "To avoid overfitting problem in the model",
+            "All the above",
+            "None of the above"
+        ],
+        "correct": 2
+    },
+    {
+        "id": 17,
+        "q": "About the cosine metrics it is possible to say that",
+        "options": [
+            "Two vectors with the same orientation have a cosine similarity of 1",
+            "Two vectors oriented at 90° relative to each other have a similarity of 0",
+            "All of the above",
+            "None of the above"
+        ],
+        "correct": 2
+    },
+    {
+        "id": 18,
+        "q": "What similarity feature/features discussed in class offers/offer the property to allow a fast comparison based on a short 1D vector of elements or bits",
+        "options": [
+            "phash",
+            "ahash",
+            "All the above",
+            "Cross-correlation"
+        ],
+        "correct": 2
+    },
+    {
+        "id": 19,
+        "q": "In agreement to the class discussion, which description better describes the design activity?",
+        "options": [
+            "Similarity in the dataset requires more space and processing time",
+            "Similarity in the dataset can improve generalization",
+            "Both of the above",
+            "None of the above"
+        ],
+        "correct": 2
+    },
+    {
+        "id": 20,
+        "q": "In agreement to the class discussion, in a dataset of 1100 labelled images, the search for duplications is typically achieved...",
+        "options": [
+            "by manual exploration of the dataset for better results since the number of images is not critical",
+            "by automatic iterations > 1M comparisons",
+            "by automatic iterations > 1000 comparisons"
+        ],
+        "correct": 1
+    },
+    {
+        "id": 21,
+        "q": "In agreement to the class discussion, what kind of labelling error is generally the worst case for the accuracy of the generalization of the model? ERR1 = Duplications with same labels EER2 = Duplications with different labels",
+        "options": [
+            "ERR1",
+            "ERR2",
+            "ERR1 = EER2"
+        ],
+        "correct": 1
+    },
+    {
+        "id": 22,
+        "q": "According to the class discussion, about the relationship between the operation of cross-correlation and convolution it is possible to say that",
+        "options": [
+            "They are very similar in meaning and mathematical expression",
+            "Despite the mathematical expression is similar, the meaning and their use is completely different",
+            "There is no specific relationship since they are different in meaning and mathematical expressions"
+        ],
+        "correct": 0
+    },
+    {
+        "id": 23,
+        "q": "According to the class discussion, what is the characteristic of the self-correlation (O = xcor2(A,A)) map produced by a generic image?",
+        "options": [
+            "A flat and noisy central plateau",
+            "An evident spike at the center with a very well-defined maximum",
+            "It is not possible to create an autocorrelation map from one single images, two different images are needed"
+        ],
+        "correct": 1
+    },
+    {
+        "id": 24,
+        "q": "If your data set contains extreme outliers, it better to use as preprocessing",
+        "options": [
+            "Feature clipping",
+            "Min-max normalization",
+            "Z' norm"
+        ],
+        "correct": 0
+    },
+    {
+        "id": 25,
+        "q": "A logarithmic scaling to one feature values is typically applied in a case of",
+        "options": [
+            "Outliers' presence",
+            "Negative values",
+            "A very large range in the values (>0)"
+        ],
+        "correct": 2
+    },
+    {
+        "id": 26,
+        "q": "According to the scientific visualization rules presented in class, if you are plotting many figures of merit obtained by your trained neural network on a new dataset, which is the correct ranking of visual attributes to be used? Left: low accuracy Right: HIGH ACCURACY",
+        "options": [
+            "Color intensity > Hue > Length",
+            "Area > Length > Hue",
+            "Slope > Angle > Volume",
+            "Hue > Area > Length"
+        ],
+        "correct": 3
+    },
+    {
+        "id": 27,
+        "q": "According to the discussion presented in class about the data visualization, and considering the following steps of the design workflow 1) Get Data, 2) Clean Manipulate Data, 3) Train models, 4) Test Data, 5) Improve the design, which are the main step/steps where data visualization should be involved?",
+        "options": [
+            "#1",
+            "#5",
+            "#1 and #5",
+            "#3 and #5",
+            "#2 and #5"
+        ],
+        "correct": 4
+    },
+    {
+        "id": 28,
+        "q": "According to the discussion presented in class about the similarity, consider an image A(x, y) with internal similarity (repetitions of patterns). What happens to the output of the self-cross correlation (O = xcorr2(2, 2))",
+        "options": [
+            "It is not possible to apply the cross correlation to the same image",
+            "Output O tends to be a flat plateau with one clear central peak",
+            "Output O tends to have many peaks and one evident maximum",
+            "Output O tends to have many equivalent peaks with the same maximum value"
+        ],
+        "correct": 2
+    },
+    {
+        "id": 29,
+        "q": "Machine Learning on CPUs offer the following advantages",
+        "options": [
+            "Ease of portability and use-case flexibility, Market availability at different performance and prices",
+            "Ease of portability and use-case flexibility, Market availability at different performance and prices, Deployment across a wide spectrum of devices",
+            "Ease of portability and use-case flexibility, Deployment across a wide spectrum of devices",
+            "Market availability at different performance and prices, Deployment across a wide spectrum of devices"
+        ],
+        "correct": 1
+    },
+    {
+        "id": 30,
+        "q": "According to the class discussion, text prefiltering is often used as input for a neural network to deal with a large text input making the networks able to classifiy the input",
+        "options": [
+            "True, using the hamming distance as prefilering",
+            "True, using the cosine distance as prefilering",
+            "True, using the string approximate match distance as prefilering",
+            "True, using the discrete gradient descent as prefilering",
+            "True, using the so-called \"word embeddings\" technique"
+        ],
+        "correct": 4
+    },
+    {
+        "id": 31,
+        "q": "The Inception-v3 deep learning pretrained model discussed during the course is a model for",
+        "options": [
+            "Post processing",
+            "None of the other options",
+            "Image Enhancing",
+            "Image classification",
+            "Segmentation"
+        ],
+        "correct": 3
+    },
+    {
+        "id": 32,
+        "q": "Intelligent vision systems can achieve Semantic segmentation by",
+        "options": [
+            "A hybrid approach by blob detection to select candidate ROIs and then image classification of the ROIs",
+            "A complete fully convolutional solution",
+            "A hybrid approach by blob detection to select candidate ROIs and then image segmentation of the ROIs",
+            "None of the other options"
+        ],
+        "correct": 1
+    },
+    {
+        "id": 33,
+        "q": "An AI model is processing an input RGB image to evaluate the age expressed in years of the face present in the image. What kind of model is it?",
+        "options": [
+            "Classifier Model",
+            "Regressor Model",
+            "Clustering Model",
+            "Reinforced Learning Model",
+            "None of the above"
+        ],
+        "correct": 1
+    },
+    {
+        "id": 34,
+        "q": "Acoording to class discussion, the theory of intelligent systems should include the following designing steps:",
+        "options": [
+            "Representation",
+            "Representation, Evaluation",
+            "Representation, Evauation, Optimization",
+            "None of the other option"
+        ],
+        "correct": 2
+    },
+    {
+        "id": 35,
+        "q": "Clustering always requires supervised dataset",
+        "options": [
+            "Yes",
+            "No"
+        ],
+        "correct": 1
+    },
+    {
+        "id": 36,
+        "q": "Acoording to class discussion, using a black box solution is:",
+        "options": [
+            "Bad practice for a ML designer",
+            "Can be used under specific circumstances",
+            "Since all state of the art models tend to be quite large and un-explainable, it is current good practice to adopt black box approach since you get the best models"
+        ],
+        "correct": 1
+    },
+    {
+        "id": 37,
+        "q": "You have a dataset X of 1000 samples and number of features F = 4 features. You want to reduce the number of features F to 2 for data visualization. According to the goal, consider the following options. OPTION A: Apply PCA to X and select only the first 2 Principal Components. OPTION B: Apply the Feedforward Feature Selection to X and select only the first 2 more relevant features.",
+        "options": [
+            "Option A is NOT possible. Option B is NOT possible",
+            "Option A is NOT possible. Option B is possible",
+            "Option A is possible. Option B is possible.",
+            "Option A is possible. Option B is NOT possible."
+        ],
+        "correct": 2
+    },
+    {
+        "id": 38,
+        "q": "You have a feature in your dataset with the following values F1 = [-5, 0, +5], which normalization will give you the following F1_norm = [0, 0.5, 1",
+        "options": [
+            "Z-score",
+            "Clipping",
+            "Min-MAX",
+            "A different type of normalization"
+        ],
+        "correct": 2
+    },
+    {
+        "id": 39,
+        "q": "According to the class discussion, in general for a given small dataset X, if you train a feed-forward neural models (of the same type) with an increasing number of neurons, which case is more probable?",
+        "options": [
+            "None of the below",
+            "The training error and the validation will decrease indefinitely",
+            "The training error will increase",
+            "The validation error will decrease indefinitely"
+        ],
+        "correct": 0
+    },
+    {
+        "id": 40,
+        "q": "According to the class discussion, in a cross-validation single test, which train/test partition of the samples will provide the lower training error but the lower confidence in the test results?",
+        "options": [
+            "Training set = 99%, Test Set = 01%",
+            "Training set = 75%, Test Set = 25%",
+            "Training set = 50%, Test Set = 50%",
+            "Training set = 25%, Test Set = 75%",
+            "Training set = 01%, Test Set = 99%"
+        ],
+        "correct": 0
+    },
+    {
+        "id": 41,
+        "q": "According to the class discussion, what kind of activity can be performed on the test set?",
+        "options": [
+            "All the below",
+            "Mean test error estimation",
+            "Mean test error estimation and standard deviation",
+            "Confusion matrix test"
+        ],
+        "correct": 0
+    },
+    {
+        "id": 42,
+        "q": "According to the class discussion, what kind of activity can be performed on the train set?",
+        "options": [
+            "Design of the #of neurons",
+            "Design of the #of layers",
+            "Normalization",
+            "PCA",
+            "All the other options"
+        ],
+        "correct": 4
+    },
+    {
+        "id": 43,
+        "q": "According to the class discussion, where can be performed the feature engineering?",
+        "options": [
+            "Only on the test set",
+            "On the train set and the test set",
+            "Not on the train, not on the test set, but only on a different dataset",
+            "Only on the train set"
+        ],
+        "correct": 3
+    },
+    {
+        "id": 44,
+        "q": "Which option is correct?",
+        "options": [
+            "From the confusion matrix is possible to process the classification error and vice versa",
+            "The confusion matrix is applicable only to binary classification systems",
+            "From the confusion matrix is possible to process the classification error",
+            "The classification error is equal to the sum of the diagonal elements of the confusion matrix"
+        ],
+        "correct": 2
+    },
+    {
+        "id": 45,
+        "q": "According to the notation used in class, which kind of a model is described by the equation f(x) = sgn(w - x + b)",
+        "options": [
+            "Liner regressor",
+            "Soft-max neuron",
+            "Sigmoidal neuron",
+            "Liner classifier",
+            "Gradient descent formula",
+            "Number of the model's parameters"
+        ],
+        "correct": 3
+    },
+    {
+        "id": 46,
+        "q": "According to the notation used in class, which kind of a classifier is better described by the following definition: \"the output is the label produced by the most probable classifier\"",
+        "options": [
+            "Supervised Classifier",
+            "K-means",
+            "Bayes Optimal Classifier",
+            "None of the other options"
+        ],
+        "correct": 2
+    },
+    {
+        "id": 47,
+        "q": "According to the class discussion the kNN classifier, what kind of learning is it?",
+        "options": [
+            "Instance-based Learning",
+            "Eager Learning",
+            "Hard-limited Learning",
+            "Unsupervised Clustering",
+            "None of the other options"
+        ],
+        "correct": 0
+    },
+    {
+        "id": 48,
+        "q": "According to the class discussion, what is the classifier with the following properties: not based on neural techniques; it's deterministic with no random initialization; perfect repeatability; a minimum number of parameters is needed; learning is very simple but effective; perfect explain ability",
+        "options": [
+            "Linear classifier",
+            "Decision Tree",
+            "kNN",
+            "K-means",
+            "None of the other options"
+        ],
+        "correct": 2
+    },
+    {
+        "id": 49,
+        "q": "According to the class discussion on kNN classifiers about the k parameter and its relationship to regularization of the decision boundaries and the computational complexity, what is the correct option about larger values of k?",
+        "options": [
+            "Less regularization and more complexity",
+            "More regularization and more complexity",
+            "Less regularization and less complexity",
+            "More regularization and less complexity",
+            "The parameter k is not related to regularization and complexity"
+        ],
+        "correct": 1
+    },
+    {
+        "id": 50,
+        "q": "According to the class discussion on PCA what is the correct option?",
+        "options": [
+            "PCA vectors are originating from the center of mass of the points",
+            "All subsequent principal component vectors are orthogonal",
+            "All the other options"
+        ],
+        "correct": 2
+    },
+    {
+        "id": 51,
+        "q": "According to the class discussion on PCA what is the correct option?",
+        "options": [
+            "All subsequent principal component vectors are orthogonal",
+            "The variance of the data projection on the first PCA vectors is maximized",
+            "All the other options"
+        ],
+        "correct": 2
+    },
+    {
+        "id": 52,
+        "q": "According to the class discussion about unsupervised learning, what is the method with the following properties: you need to specify the number of clusters k in advance, is unable to handle noisy data and outliers, it is not suitable to discover clusters with non-convex shapes",
+        "options": [
+            "K-means",
+            "kNN",
+            "Decision tree",
+            "None of the other options"
+        ],
+        "correct": 0
+    },
+    {
+        "id": 53,
+        "q": "According to the class discussion, considering the equation of the backpropagation in a feedforward neural network of weight w_ij connected to the following output neuron k, which is the missing term? DELTAW_ij = ? * y_j * delta_k",
+        "options": [
+            "??? = x_j (the input vector)",
+            "??? = alfa (the regularization term > 1)",
+            "??? = alfa (the regularization term < 1)",
+            "??? = x_j (the input vector error)"
+        ],
+        "correct": 2
+    },
+    {
+        "id": 54,
+        "q": "According to the class discussion, considering a general CNN architecture, what is the sequence of modules which is more likely",
+        "options": [
+            "Input layer -> Relu -> Convolution -> Max Pooling -> Softmax -> Output layer",
+            "Input layer -> Relu -> Max Pooling -> Softmax -> Convolution -> Output layer ahash",
+            "Input layer -> Relu -> Max Pooling -> Convolution -> Softmax -> Output layer",
+            "Input layer -> Convolution -> Relu -> Max Pooling -> Softmax -> Output layer"
+        ],
+        "correct": 3
+    },
+    {
+        "id": 55,
+        "q": "According to the class discussion, Traditional Segmentation methods are quite useful to produce blobs or object candidates to be further processed by deep models for classification or measurements. Traditional Segmentation methods can be partitioned in",
+        "options": [
+            "Global knowledge, Edge-based",
+            "Edge-based, Region-based",
+            "Global knowledge, Edge-based, Region-based",
+            "None of the other options"
+        ],
+        "correct": 2
+    },
+    {
+        "id": 56,
+        "q": "According to the class discussion referred to edge computing, is it possible to process images with trained deep learning models on external small, dedicated devices connect via USB connection?",
+        "options": [
+            "True: the usage of dedicated processors and the USB bandwidth make this option possible",
+            "False: the USB bandwidth make this option not possible",
+            "False: the needed computational complexity needed to run trained deep learning models make this option not possible",
+            "False: the bandwidth and the computational complexity need to process images with trained deep learning model is not adequate"
+        ],
+        "correct": 0
+    },
+    {
+        "id": 57,
+        "q": "According to the class discussion what is Greedy Layer-Wise Training?",
+        "options": [
+            "A supervised training step to improve auto-encoders",
+            "A supervised training step to classical feedforward networks",
+            "An unsupervised training step to classical feedforward networks",
+            "An unsupervised training step to improve auto-encoders"
+        ],
+        "correct": 3
+    },
+    {
+        "id": 58,
+        "q": "The number of parameters to be fixed during a complete training in a deep learning model like the VGGNet presented in the course is about",
+        "options": [
+            "< 100000",
+            "> 100 Million",
+            "about 1 Million",
+            "about 10 Million"
+        ],
+        "correct": 1
+    },
+    {
+        "id": 59,
+        "q": "Considering the class discussing about the basic metrics in data similarity, given a vector A, vector B, a real number alpha, and the cosine metrics cos(A,B) it is possible to say that",
+        "options": [
+            "alpha * cos(A,B) = cos(alpha*A, B)",
+            "cos(A,B) = cos(alpha*A, alpha*B)",
+            "cos(A,B) = cos(alpha*A, B) = cos(A, alpha*B)",
+            "alpha * cos(A,B) = cos(alpha*A, alpha*B)"
+        ],
+        "correct": 1
+    },
+    {
+        "id": 60,
+        "q": "Referring to the class discussion on data leakage what is the worst situation?",
+        "options": [
+            "The unwanted leakage of data from training dataset to test data set",
+            "None of the other options since transferring data from test and/or training dataset is normal when the accuracy of the model is tested",
+            "The unwanted leakage of data from test dataset to training data set since you are subtracting data to the generalization test, making the situation more pessimistic",
+            "The unwanted leakage of data from test dataset to training data set since you are subtracting data to the generalization test, making the situation more optimistic"
+        ],
+        "correct": 3
+    },
+    {
+        "id": 61,
+        "q": "What task of an intelligent vision system is associated to following description: split or separate an image into regions using features, patterns and colors to facilitate recognition, understanding, and Region Of Interests (ROI) processing and measurements.",
+        "options": [
+            "Model training",
+            "Post processing",
+            "Enhancing",
+            "Segmentation",
+            "Feature engineering"
+        ],
+        "correct": 3
+    },
+    {
+        "id": 62,
+        "q": "In agreement to the class discussion, what kind of labelling error is generally the worst case for the accuracy of the generalization of the model? ERR1 = Duplications with same labels, EER2 = Duplications with different labels",
+        "options": [
+            "ERR1 is equalt to EER2 by definition",
+            "ERR2 is the worst case",
+            "ERR1 is the worst case",
+            "ERR1 is roughly equalt to EER2 in general"
+        ],
+        "correct": 1
+    },
+    {
+        "id": 63,
+        "q": "According to the class discussion, the convolution/correlation operations are of foundamental relevance for many deep learning models. What is the characteristic of the autocorrelation map produced by a generic image?",
+        "options": [
+            "It is not possible to create an autocorrelation map from one single images, two different images are needed",
+            "None of the other options",
+            "A flat and noisy central plateau",
+            "An evident spike at the center with a very well defined maximum"
+        ],
+        "correct": 3
+    },
+    {
+        "id": 64,
+        "q": "A tensor processing unit (TPU) is",
+        "options": [
+            "A part of a model of the Convolutional Neural Network used to process dedicated tensorial activation functions in the neurons",
+            "An internal unit of the Arm processor architecture introduced to support 8-bit fixed-point matrix multiplication for deep learning models",
+            "An AI accelerator application-specific integrated circuit (ASIC) and the related board developed specifically for neural network machine learning",
+            "None of the other options"
+        ],
+        "correct": 2
+    },
+    {
+        "id": 65,
+        "q": "You have a feature in your dataset with the following values F2 = [ -13 0 1 2 4 128 ], which normalization will give you the following F2_norm = [0 0 1 2 4 10 ]",
+        "options": [
+            "Z-score",
+            "Min-MAX",
+            "Clipping",
+            "A different type of normalization"
+        ],
+        "correct": 2
+    },
+    {
+        "id": 66,
+        "q": "Considering the possible Intelligent Vision tasks which is the correct option?",
+        "options": [
+            "Instance Segmentation is less complex than Object Detection",
+            "Instance Segmentation is more complex than Object Detection",
+            "Instance Segmentation and Object Detection have a similar complexity",
+            "The other otpions are not Intelligent Vision tasks"
+        ],
+        "correct": 1
+    },
+    {
+        "id": 67,
+        "q": "In a given picture ImmA you see 1 car and 5 people in a city background. Considering the Intelligent systems IS processing the image ImmA and producing in output the label \"humans\", what Intelligent Vision task is performing?",
+        "options": [
+            "Instance segmentation",
+            "Object detection",
+            "Image classification",
+            "Semantic segmentation"
+        ],
+        "correct": 2
+    },
+    {
+        "id": 68,
+        "q": "According to the class discussion, considering the training of deep learning models on standard CPUs and standard commercial GPUs boards, what is the gain in training performance (time) and efficiency (energy) for a medium/large-size project?",
+        "options": [
+            "About 100x in performance and 10x in efficiency",
+            "More than 100x in performance and more than 5x in efficiency",
+            "About 10x in performance and 5x in efficiency",
+            "About 2x in performance and 2x in efficiency"
+        ],
+        "correct": 2
+    },
+    {
+        "id": 69,
+        "q": "A basic industrial setup for Intelligent vision systems is typically composed by the following elements",
+        "options": [
+            "Standard industrial smart camera with optics, external processing HW and SW units, illumination system",
+            "Standard industrial camera with optics, illumination system",
+            "Just a standard industrial camera with optics",
+            "Standard industrial camera with optics, processing HW and SW units, illumination system",
+            "Standard industrial camera with optics, processing HW and SW units"
+        ],
+        "correct": 3
+    },
+    {
+        "id": 70,
+        "q": "Acoording to class discussion, the classification item and thei decision boundaries, it is possible in general to optimize during the training/optimization step",
+        "options": [
+            "The accuracy",
+            "The margin",
+            "Both"
+        ],
+        "correct": 2
+    },
+    {
+        "id": 71,
+        "q": "Acoording to class discussion about AI regulation in EU, regulation approach is based on:",
+        "options": [
+            "List of use cases",
+            "Risk assessment of the application",
+            "Both",
+            "None of the above"
+        ],
+        "correct": 2
+    },
+    {
+        "id": 72,
+        "q": "Acoording to the discussion presented in class, the EU regulatory framework for AI is:",
+        "options": [
+            "Mainly focused on public services",
+            "Mainly focused on health-related applications",
+            "Mainly focused on data privacy",
+            "None of the other options"
+        ],
+        "correct": 3
+    },
+    {
+        "id": 73,
+        "q": "Which of the following statements describe in a most accurate and complete way the properties of the Mean Absolute Error (MAE) metric?",
+        "options": [
+            "The lower the MAE, the better the model",
+            "MAE is less sensitive to outliers compared to MSE",
+            "Range: [0,+inf.]",
+            "None of other options (except \"All other options\")",
+            "All other options (except \"None of other options\")",
+            "MAE is calculated as mean(abs(observeds - predicteds))"
+        ],
+        "correct": 4
+    },
+    {
+        "id": 74,
+        "q": "Which type of AI lacks all of the following: self-awareness, consciousness, emotions, genuine intelligence comparable to humans, and Gestalt understanding?",
+        "options": [
+            "Large AI models",
+            "Reactive AI systems",
+            "Artificial General Intelligence models",
+            "Narrow AI models",
+            "None of other options"
+        ],
+        "correct": 3
+    },
+    {
+        "id": 75,
+        "q": "What is the correct range for the metric Mean Squared Error (MSE)?",
+        "options": [
+            "[inf.,+inf.]",
+            "[0,1]",
+            "[0,+inf.]",
+            "[-1,1]",
+            "None of other options"
+        ],
+        "correct": 2
+    },
+    {
+        "id": 76,
+        "q": "What is the primary advantage of stratified k-Fold Cross-Validation (k-FCV) compared to simple k-FCV?",
+        "options": [
+            "It ensures that all data partitions are of equal size",
+            "It reduces computational complexity",
+            "It preserves the class distribution across all partitions",
+            "It improves the training time for large datasets",
+            "It eliminates the need for test partitions"
+        ],
+        "correct": 2
+    },
+    {
+        "id": 77,
+        "q": "In a 1D linear model with the equation z=w1*x+b, how many data points are required to completely describe the model?",
+        "options": [
+            "4, because it is required at least the double to make invertible the algebra problem solving the parameter",
+            "2, because there are two parameters (w1 and b) to determine",
+            "3, because one additional point is needed for generalization",
+            "1, because the model is linear",
+            "None of other options"
+        ],
+        "correct": 1
+    },
+    {
+        "id": 78,
+        "q": "In the k-Fold Cross Validation (k-FCV) technique, what does the parameter k represent?",
+        "options": [
+            "The number of dimensions to be reduced with PCA",
+            "The number of eigenvalues in the dataset's covariance matrix",
+            "The number of partitions the dataset is divided into",
+            "The number of neighbors used in a k-NN classification algorithm",
+            "The number of annealing steps in a training method"
+        ],
+        "correct": 2
+    },
+    {
+        "id": 79,
+        "q": "Considering the \"Data knowledge spectrum plot\" discussed in class, which of the following cases is correct when just some parameters of the mathematical model must be tuned/fitted?",
+        "options": [
+            "When no a priori information is available and a huge quantity of data is required to train the model",
+            "When the model of the process generating the data is available and a limited quantity of data is required to fit the parameters",
+            "When no a-priori information is available and a limited quantity of data is required to train the model",
+            "When the model of the process generating the data is available and a huge quantity of data is required to train the model",
+            "None of other options"
+        ],
+        "correct": 1
+    },
+    {
+        "id": 80,
+        "q": "According to the class discussion, in general for a given small dataset X, if you train a feed-forward neural models (of the same type) with an increasing number of neurons, which case is more probable?",
+        "options": [
+            "None of the other options",
+            "The training error and the validation will decrease indefinitely",
+            "The training error will increase",
+            "The validation error will decrease indefinitely",
+            "The validation error will increase"
+        ],
+        "correct": 4
+    },
+    {
+        "id": 81,
+        "q": "The design of intelligent systems for Industry 4.0 applications should be compliant to the following main design principles.",
+        "options": [
+            "Interoperability, information transparency, improved technical assistance, Decentralized decisions",
+            "Interoperability, information transparency, improved technical assistance, Wireless connectivity",
+            "Interoperability, information transparency, improved technical assistance",
+            "Interoperability, information transparency, Decentralized decisions",
+            "None of other options"
+        ],
+        "correct": 0
+    },
+    {
+        "id": 82,
+        "q": "What is the correct range for the metric Mean Absolute Error (MAE)?",
+        "options": [
+            "None of other options",
+            "[1,1]",
+            "[0,+inf.]",
+            "[-inf.,+inf.]",
+            "[0,1]"
+        ],
+        "correct": 2
+    },
+    {
+        "id": 83,
+        "q": "According to the class discussion, considering a standard Intelligent vision system, which capability can be processed onboard on a recent smart industrial camera?",
+        "options": [
+            "Segmentation, Measurement, Classification with trained non-deep models",
+            "Segmentation, Measurement, Classification with trained deep models and training of deep models",
+            "Segmentation, Measurement",
+            "Segmentation, Measurement, Classification with trained deep models",
+            "Segmentation, Measurement, Classification"
+        ],
+        "correct": 3
+    },
+    {
+        "id": 84,
+        "q": "The GoogLeNet deep learning pretrained model discussed during the course is model for",
+        "options": [
+            "None of the other options",
+            "Segmentation",
+            "Post processing",
+            "Image Enhancing",
+            "Image classification"
+        ],
+        "correct": 4
+    },
+    {
+        "id": 85,
+        "q": "A simple k-Fold Cross Validation procedure may",
+        "options": [
+            "Get stuck into one the local minima",
+            "Prevent overfitting",
+            "None of the other options",
+            "Lead to disarranging the proportion of examples from each class in the test partition",
+            "Making impossible to process the test error"
+        ],
+        "correct": 3
+    },
+    {
+        "id": 86,
+        "q": "Why is it important to maintain a balanced partition between training and test data?",
+        "options": [
+            "To make the training and test data identical for consistency",
+            "To eliminate the need for validation during training",
+            "None of other options",
+            "To ensure the model can generalize well and avoid biased performance estimates",
+            "To ensure the test data is larger than the training data for accurate error estimation"
+        ],
+        "correct": 3
+    },
+    {
+        "id": 87,
+        "q": "Do you need to adjust the value of k in the k-Fold Cross Validation (k-FCV) technique?",
+        "options": [
+            "No, because k is fixed by default to 5 or 10 and does not need adjustment",
+            "None of other options",
+            "No, because adjusting k does not impact the cross-validation results",
+            "Yes, to ensure that the number of folds equals the number of classes in the dataset",
+            "Yes, to avoid creating a small test partition poorly populated with examples that may bias performance measures",
+            "No, because k must always be equal to the number of features in the dataset"
+        ],
+        "correct": 4
+    },
+    {
+        "id": 88,
+        "q": "Are there differences in how you evaluate the performance of a regressor compared to a classifier?",
+        "options": [
+            "No, the evaluation process is identical since both are machine learning models",
+            "No, both regressors and classifiers are evaluated using the same metrics like accuracy, precision, and F1-score",
+            "Yes, regressors are typically evaluated using metrics like accuracy, precision, recall, and F1-score, while classifiers use metrics like Mean Absolute Error (MAE), Mean Squared Error (MSE), or R-squared",
+            "Yes, regressors are typically evaluated using metrics like Mean Absolute Error (MAE), Mean Squared Error (MSE), or R-squared, while classifiers use metrics like accuracy, precision, recall, and F1-score",
+            "None of other options"
+        ],
+        "correct": 3
+    },
+    {
+        "id": 89,
+        "q": "Why is the Leave One Person Out technique important for deep learning models?",
+        "options": [
+            "Because it allows the model to memorize the data for each person individually, ensuring high accuracy",
+            "Because it reduces the size of the training set, making the training process faster",
+            "None of other options",
+            "Because it focuses on overfitting the model to a single person's data for personalization",
+            "Because it ensures the model generalizes well by testing on unseen individuals, reducing bias when working with person-specific data"
+        ],
+        "correct": 4
+    },
+    {
+        "id": 90,
+        "q": "What happens if the whole data set is used for both training and validating a machine learning model?",
+        "options": [
+            "The model will always perform better on test data",
+            "The training error will always be lower than the test error",
+            "The model will generalize well to unseen data",
+            "We have no clue about how the model will behave with unseen cases",
+            "None of other options"
+        ],
+        "correct": 3
+    },
+    {
+        "id": 91,
+        "q": "What is an example of using the 'Divide et Impera' strategy for handling unbalanced datasets?",
+        "options": [
+            "Use a single classifier trained on all data without considering class distribution",
+            "Assign random labels to rare cases to increase variability and improve the training of the model",
+            "Create hierarchical classifiers to divide the classification task into smaller, balanced sub-problems",
+            "Duplicate rare cases to match the number of majority class samples",
+            "Remove rare cases to simplify the dataset"
+        ],
+        "correct": 2
+    },
+    {
+        "id": 92,
+        "q": "Is dividing a time series dataset into training and test sets a potential problem, and can it be addressed using classical cross-validation techniques like k-FCV?",
+        "options": [
+            "None of other options",
+            "No, it is not a problem because temporal dependencies do not affect model performance",
+            "Yes, it is a potential problem because it can lead to data leakage, and classical cross-validation techniques are not always suitable due to temporal dependencies",
+            "Yes, it is a potential problem but can be addressed using classical cross-validation techniques like k-FCV",
+            "No, it is not a problem as time series data behaves like any other dataset"
+        ],
+        "correct": 2
+    },
+    {
+        "id": 93,
+        "q": "What is a characteristic of overfitting in a machine learning model?",
+        "options": [
+            "The model is poorly adjusted to the data",
+            "The model suffers from high error both in training and test data",
+            "None of other options",
+            "The training error and test error are both high",
+            "The model offers high precision for known cases but behaves poorly for unseen cases"
+        ],
+        "correct": 4
+    },
+    {
+        "id": 94,
+        "q": "Which of the following statements describe in a most accurate and complete way the properties of the R-squared metric?",
+        "options": [
+            "The higher the R-squared, the better the model",
+            "None of the other options (except \"All other options\")",
+            "Range [0,1]",
+            "The properties of variation at the outcome that is explained by the predictor variable",
+            "All other options (except \"None of other options\")"
+        ],
+        "correct": 4
+    },
+    {
+        "id": 95,
+        "q": "In agreement to the class discussion, in a dataset of 1100 labelled images, the search for duplications is typically achieved",
+        "options": [
+            "Using hashing functions to check for duplicates",
+            "Manually checking each image to avoid errors",
+            "By applying a clustering algorithm on the image features and identifying clusters with identical features",
+            "Using an automatic script that resizes all images to 1x1 pixels and then compares them",
+            "None of other options"
+        ],
+        "correct": 0
+    },
+    {
+        "id": 96,
+        "q": "Why is it necessary to aggregate the values from individual folds in the k-Fold Cross Validation (k-FCV) procedure?",
+        "options": [
+            "To summarize the performance across all folds into a single metric.",
+            "To ensure the model achieves the lowest possible error on one of the folds",
+            "None of other options",
+            "To identify the most important fold for model performance",
+            "Aggregation is not necessary; each fold is evaluated independently and dropped is not optimal"
+        ],
+        "correct": 0
+    },
+    {
+        "id": 97,
+        "q": "Which of the following best describes Transduction in the context of machine learning?",
+        "options": [
+            "Creating a new function based on unseen data",
+            "None of other options",
+            "Deriving the values of the given function for points of interest",
+            "Deriving the values of the unknown function for points of interest from the given data",
+            "Deriving the function from the given data"
+        ],
+        "correct": 3
+    },
+    {
+        "id": 98,
+        "q": "Can you perform design activities like deciding the number of neurons or applying regularization on test data?",
+        "options": [
+            "Yes, it helps refine the model for deployment",
+            "Yes, it ensures the model performs better on unseen data",
+            "No, test data must be used only for evaluating generalization error",
+            "You can design the model after observing the test results to optimize accuracy"
+        ],
+        "correct": 2
+    },
+    {
+        "id": 99,
+        "q": "Which of the following examples highlights a common issue with unbalanced datasets in real-world applications?",
+        "options": [
+            "In credit scoring, the dataset is balanced because all customers have an equal chance of returning the loan",
+            "None of other options",
+            "In medical applications, the dataset is typically balanced because the number of healthy and unhealthy patients is equal",
+            "In medical applications, most patients are healthy, while only a small fraction suffers from a certain disease",
+            "In credit scoring, most customers default on their loans, leading to an unbalanced dataset"
+        ],
+        "correct": 3
+    },
+    {
+        "id": 100,
+        "q": "What is a characteristic of underfitting in a machine learning model?",
+        "options": [
+            "The model offers high precision for known cases but behaves poorly for unseen cases",
+            "The model performs very well on training data but poorly on test data",
+            "The model suffers from high error both in training and test data",
+            "None of other options",
+            "The model is too tightly adjusted to the training data"
+        ],
+        "correct": 2
+    },
+    {
+        "id": 101,
+        "q": "Which metric is calculated as TP / (TP + FN) from the confusion matrix?",
+        "options": [
+            "Recall (Sensitivity)",
+            "Specificity",
+            "Precision",
+            "None of other options",
+            "Accuracy"
+        ],
+        "correct": 0
+    },
+    {
+        "id": 102,
+        "q": "Which of the following is an example of a supervised learning algorithm?",
+        "options": [
+            "None of other options",
+            "k-means clustering",
+            "Principal Component Analysis (PCA)",
+            "Apriori algorithm",
+            "Linear regression"
+        ],
+        "correct": 4
+    },
+    {
+        "id": 103,
+        "q": "How many parameters are there in a fully connected feedforward neural network with 10 input neurons, 10 neurons in the hidden layer, and 1 output neuron?",
+        "options": [
+            "100, including weights and biases",
+            "121, including weights and biases",
+            "101, including weights and biases",
+            "300, including all parameters",
+            "10, only considering the input layer connections",
+            "More than 300, including all parameters"
+        ],
+        "correct": 1
+    },
+    {
+        "id": 104,
+        "q": "Which practice helps prevent Data Leakage?",
+        "options": [
+            "Including all available data in the training set",
+            "Separating features and target variables correctly and ensuring no test data influences training",
+            "None of other options",
+            "Using fewer features in the dataset",
+            "Increasing the complexity of the model to capture more patterns"
+        ],
+        "correct": 1
+    },
+    {
+        "id": 105,
+        "q": "What is a potential outcome of Data Leakage in a machine learning model?",
+        "options": [
+            "The model achieves perfect generalization on all datasets",
+            "The model performs well on the training data but fails to generalize to unseen data",
+            "The model requires additional features to improve performance",
+            "The model becomes too simple to capture the data distribution",
+            "None of other options"
+        ],
+        "correct": 1
+    },
+    {
+        "id": 106,
+        "q": "How many parameters are there in a fully connected feedforward neural network with 2 input neurons, 2 neurons in the hidden layer 1 output neuron ?",
+        "options": [
+            "12, assuming biases are not included",
+            "8, counting connections but omitting biases",
+            "6, including weights and biases",
+            "9, including weights and biases",
+            "None of other options"
+        ],
+        "correct": 3
+    },
+    {
+        "id": 107,
+        "q": "Which of the following describes a valid approach for handling unbalanced datasets using the \"Change labelling\" strategy?",
+        "options": [
+            "Train a single classifier on the original labels without adjustments",
+            "Use uniform sampling to ensure equal representation of all classes",
+            "Group and merge rare cases into broader categories",
+            "Duplicate rare cases without modifying labels",
+            "Ignore rare cases entirely to focus on the majority class"
+        ],
+        "correct": 2
+    },
+    {
+        "id": 108,
+        "q": "What is the name of the process where the whole data set is randomly partitioned into two equal subsets (A and B), the model is built with A and validated with B, then reversed with the model built with B and validated with A, and the performance measures are aggregated across 5 repetitions? * None of other options",
+        "options": [
+            "None of other options",
+            "Leave-One-Out Cross Validation",
+            "Bootstrap Aggregation (Bagging)",
+            "K-Fold Cross Validation",
+            "Monte Carlo Validation (Repeated Random Subsampling Validation)"
+        ],
+        "correct": 3
+    },
+    {
+        "id": 109,
+        "q": "Which of the following scenarios is an example of Data Leakage?",
+        "options": [
+            "Using cross-validation for model evaluation",
+            "None of other options",
+            "Including features in the training dataset that are derived from the target variable",
+            "Applying feature scaling only to the training data",
+            "Using a balanced dataset for training and testing"
+        ],
+        "correct": 2
+    },
+    {
+        "id": 110,
+        "q": "According to the class discussion on data leakage, which is the worst case between Test-to-Training Leakage and Training-to-Test Leakage?",
+        "options": [
+            "Test-to-Training Leakage",
+            "Training-to-Test Leakage",
+            "Training-to-Test Leakage and Test-to-Training Leakage have similar but small impact on the generation capability since recent deep learning models...",
+            "Training-to-Test Leakage and Test-to-Training Leakage have similar and strong impact on generalization capability"
+        ],
+        "correct": 0
+    },
+    {
+        "id": 111,
+        "q": "Are many Natural Language Processing (NLP) tasks considered transduction problems?",
+        "options": [
+            "Because the model converts one string into another",
+            "Because the model derives a function from given data",
+            "None of the other options",
+            "Because the model predicts the output without using any input data",
+            "Because the model generates unseen data points from an existing function"
+        ],
+        "correct": 0
+    },
+    {
+        "id": 112,
+        "q": "Which of the following scenarios is an example of Data Leakage?",
+        "options": [
+            "When additional random information is added to the training dataset",
+            "When all features are present in the training dataset but not normalized",
+            "None of the other options",
+            "When a critical feature required for prediction is not present in the training dataset but is used during testing or real-world application",
+            "When the training and test datasets are split properly"
+        ],
+        "correct": 3
+    },
+    {
+        "id": 113,
+        "q": "Where are the correct predictions and errors located in a confusion Matrix?",
+        "options": [
+            "Errors are located on the diagonal and correct predictions are in the other cells",
+            "Errors located on the borders of the Matrix and the correct predictions are in the inner cells",
+            "Errors alternate columns starting with one for each class",
+            "Correct predictions are located on the diagonal, and errors are off diagonal",
+            "None of other options"
+        ],
+        "correct": 3
+    },
+    {
+        "id": 114,
+        "q": "According to the scientific visualization rules presented in class, is it possible to plot a graphical representation of the confidence level of one single figure of merit (like the accuracy) of your trained model?",
+        "options": [
+            "Yes, the confidence interval data have different units and meaning but they can be represented in the same plot using different visual attributes like \"slope\" and \"area\"",
+            "No, the confidence interval data have the same units and meaning and hence can not be represented in the same plot",
+            "Yes, the confidence interval data have the same units and meaning and they can be represented in the same plot"
+        ],
+        "correct": 2
+    },
+    {
+        "id": 115,
+        "q": "We have a neural network NET1 where the Degrees of Freedom are excessive compared to the available data and NET2 where the Degrees of Freedom are balanced compared to the available data. What is likely to happen?",
+        "options": [
+            "NET1 will have a higher generalization error compared to NET2 due to overfitting",
+            "None of other options",
+            "NET1 will generalize better than NET2 due to its higher complexity",
+            "NET2 will have a higher generalization error due to underfitting",
+            "Both NET1 and NET2 will perform equally well regardless of data availability since there are sufficient Degrees of Freedom"
+        ],
+        "correct": 0
+    },
+    {
+        "id": 116,
+        "q": "In which applications is the Leave One Person Out Cross Validation technique particularly important?",
+        "options": [
+            "Image classification tasks with large, balanced datasets",
+            "Generale-purpose training of deep learning models on standard benchmarks",
+            "Biometrics and medical screening, where the model's ability to generalize the trained behavior to unseen individuals is critical",
+            "Speech recognition with datasets containing millions of samples"
+        ],
+        "correct": 2
+    },
+    {
+        "id": 117,
+        "q": "Which of the following is a valid solution for handling unbalanced datasets as discussed in class?",
+        "options": [
+            "Apply random oversampling without analysing class distributions",
+            "Collect more data as possible even without considering feature distributions",
+            "Use uniform sampling methods to ensure fairness",
+            "Increases the weight of the loss for samples from rare classes",
+            "Ignore rare cases completely"
+        ],
+        "correct": 3
+    },
+    {
+        "id": 118,
+        "q": "What does the term \"Degrees of Freedom\" (DoF) refer to in the context of machine learning models?",
+        "options": [
+            "The difference between training and test error",
+            "The number of independent variables or parameters that must be specified to uniquely determine a solution",
+            "None of other options",
+            "The number of features in the dataset",
+            "The total amount of data used in the training set"
+        ],
+        "correct": 1
+    },
+    {
+        "id": 119,
+        "q": "Considering the class discussing about the basic metrics in data similarity, about the cosine metrics it Is possible to say that",
+        "options": [
+            "All of the other options",
+            "Two vectors oriented at 90° relative to each other have a similarity of 0",
+            "The cosine metric is taking into account of the two input vectors just the angular displacement between them",
+            "Two vectors with the same orientation have a cosine similarity of 1"
+        ],
+        "correct": 0
+    },
+    {
+        "id": 120,
+        "q": "Is the Leave One Out (LOO) Cross Validation technique suitable for vary large datasets, small datasets, or neither?",
+        "options": [
+            "It is equally suitable for both large and small datasets as it does not depend on dataset size",
+            "None of the other options",
+            "It is more suitable for very large datasets as it reduces computational complexity",
+            "It is a learning method and does not depend on the size of the dataset",
+            "It is more suitable for small datasets as it is computationally expensive for very large datasets"
+        ],
+        "correct": 4
+    },
+    {
+        "id": 121,
+        "q": "In the context of a binary neural classifier, where the decision is created by a weighted sum and a thresholding neuron, what does the Receiver Operating Characteristic (ROC) curve represent?",
+        "options": [
+            "None of other options",
+            "The confusion matrix at a specific threshold",
+            "A plot of precision against recall for the classifier",
+            "The graphical plot of the True Positive Rate (TPR) against the False Positive Rate (FPR) at various threshold settings",
+            "A single number summarizing the performance of the classifier"
+        ],
+        "correct": 3
+    },
+    {
+        "id": 122,
+        "q": "What happens when the training data is overly large compared to the test data in a unbalanced partition?",
+        "options": [
+            "The test error will be zero regardless of the partition size",
+            "The model will have perfect generalization to new data",
+            "None of other options",
+            "The training error will always be lower than the test error",
+            "The model may appear to perform well during training but lacks statistical confidence in generalization"
+        ],
+        "correct": 4
+    },
+    {
+        "id": 123,
+        "q": "According to the class discussion about the input space of the intelligent systems, which is correct option?",
+        "options": [
+            "It is possible to think to the single datum in input to the neural network as a point in the \"input space\" of the model, even if the input is a single value a N dimensional vector, or an image.",
+            "It is possible to think to the single datum in unput to the neural network as a set of N points in the \"input space\" of the model",
+            "It is not possible to think to the single datum in input to the neural network as a point in the \"input space\" of the model, in the case of a N dimensional vector when N > 2",
+            "Only for linear classifiers and linear regressors it is possible to think to the single datum in input to the neural network as a point in the \"input space\" of the model, even if the input is a single value, a N dimensional vector, or an image."
+        ],
+        "correct": 0
+    },
+    {
+        "id": 124,
+        "q": "What is the correct formula for the Misclassification Rate, where FP is False Positive, FN is False Negative, and N is the total number of samples?",
+        "options": [
+            "(TP + TN) / N",
+            "(FP + TP) / N",
+            "None of other options",
+            "(FP + FN) / N",
+            "(FN + TN) / N"
+        ],
+        "correct": 3
+    },
+    {
+        "id": 125,
+        "q": "Which of the following algorithms is NOT an example of supervised learning?",
+        "options": [
+            "Neural network regressor",
+            "None of the options",
+            "K-means clustering",
+            "Linear regression",
+            "Neural network classifier"
+        ],
+        "correct": 2
+    },
+    {
+        "id": 126,
+        "q": "What is the purpose of aggregating test values in the k-Fold Cross Validation (k-FCV) method?",
+        "options": [
+            "To obtain an overall performance metric by averaging the results across all folds",
+            "None of other options",
+            "To select the best fold for final training",
+            "To identify the fold with the lowest test error and discard the rest",
+            "To optimize the number of features used in the model"
+        ],
+        "correct": 0
+    },
+    {
+        "id": 127,
+        "q": "Which reasoning approach best describes algorithms like k-Nearest Neighbors (k-NN), linguistic transformation rules for language translation, and sequence prediction tasks?",
+        "options": [
+            "None of other options",
+            "Transduction",
+            "Deduction",
+            "Induction"
+        ],
+        "correct": 1
+    },
+    {
+        "id": 128,
+        "q": "How can Natural Language Processing (NLP) models typically be classified in terms of their reasoning approach?",
+        "options": [
+            "Transduction",
+            "None of other options",
+            "Deduction",
+            "Induction"
+        ],
+        "correct": 0
+    },
+    {
+        "id": 129,
+        "q": "According to the class discussion, nowadays, the usage of classical feature extraction and data analysis methods is outdated since the capability of the recent deep learning models and methods made them obsolete and not more present in the common practice.",
+        "options": [
+            "True",
+            "False. Most part of the job is about prepare, study and validate the data to create efficient datasets, also with classical tools.",
+            "False. For this task the Greedy Lazy Feature Extraction task is be used."
+        ],
+        "correct": 1
+    },
+    {
+        "id": 130,
+        "q": "What is the purpose of using stratified k-Fold Cross Validation (k-FCV)?",
+        "options": [
+            "To ensure that only minority classes are included in the test partitions to make the test more robust",
+            "To maximize the size of the training data by using all samples for training",
+            "To randomly shuffle the dataset without regard for class distributions",
+            "To place an equal (or near-equal) number of samples of each class in all partitions, maintaining class distributions"
+        ],
+        "correct": 3
+    },
+    {
+        "id": 131,
+        "q": "Does sample k-Fold Cross Validation (k-FCV) disarrange the portion of examples from each class in the test partition?",
+        "options": [
+            "Yes, but only when the dataset is perfectly balanced",
+            "No, disarranging class proportions is not related to k-FCV",
+            "Yes, it may disarrange the class proportions in the test partition",
+            "No, k-FCV always preserves the class proportions"
+        ],
+        "correct": 2
+    },
+    {
+        "id": 132,
+        "q": "According to the class discussion, artificial neural networks are not capable to learn human biases",
+        "options": [
+            "True. This is because of the gestalt capability present in the neural models",
+            "True. The achievable complexity of the artificial neural networks is so far from the complexity of the human brain to make impossible to mimic this characteristic",
+            "False."
+        ],
+        "correct": 2
+    },
+    {
+        "id": 133,
+        "q": "In this approach, the dataset is divided into three groups. Each group is used as a test set once, while the other two groups are used for training. What does this approach represent?",
+        "options": [
+            "A stratification process for data balancing",
+            "A Principal Component Analysis (PCA)",
+            "A clustering algorithm for partitioning data",
+            "A 3-fold Cross Validation (3CV)",
+            "A pruning method for selecting data groups"
+        ],
+        "correct": 3
+    },
+    {
+        "id": 134,
+        "q": "Which of the following methods represents a correct 3-fold Cross Validation (3CV) approach?",
+        "options": [
+            "The dataset is divided into three groups, each used and a test set once while the other two groups are used for training",
+            "None of the other options",
+            "The dataset is divided into three groups, with each group used 50% for training and 50% for validation purposes",
+            "The dataset is split into three groups, all used simultaneously for both training and testing",
+            "The dataset is divided into three groups, but only one group is used for both training and testing, and interated for the remaining cases"
+        ],
+        "correct": 0
+    },
+    {
+        "id": 135,
+        "q": "How can Data Leakage occur in image dataset?",
+        "options": [
+            "when features like size, noise, or color, which are present but they are unrelated to the task, are used for differentiate classes",
+            "when the dataset is split into training and test sets",
+            "when augmentation techniques are applied inconsistenly",
+            "when images are normalized before training",
+            "none of other options"
+        ],
+        "correct": 0
+    },
+    {
+        "id": 136,
+        "q": "In the k-Fold Cross Validation (k-FCV) technique, is it possible to calculate both mean(errors) and std(errors)?",
+        "options": [
+            "No, it is only possible to calculate std(errors) but not mean(errors)",
+            "No, it is not possible to calculate either mean(errors) or std(errors) in k-FCV since the values of errors are all equal",
+            "No, it is only possible to calculate mean(errors) but not std(errors)",
+            "yes, it is possible to calculate both mean(errors) and std(errors) accross all folds",
+            "No, it is not possible to calculate either mean(errors) or std(errors) in k-FCV since we have only one value of error"
+        ],
+        "correct": 3
+    },
+    {
+        "id": 137,
+        "q": "Can the assessment of a classifier for an image classification system also include the following methods?",
+        "options": [
+            "Adding a fair amount of noise to the input to see if the class is flipped",
+            "None of the other options (except \"All the other options\")",
+            "Changing relevant parts of the image where the main subject is present and checking if the output is changed",
+            "All other options (except \"None of the other options\")",
+            "Checking with the saliency maps if the classifier is taking into account the right pixels in the subject to be classified"
+        ],
+        "correct": 3
+    },
+    {
+        "id": 138,
+        "q": "According to the rule of thumb about Degrees of Freedom (DoF), what are they related to in a fully connected neural network?",
+        "options": [
+            "The number of weights in the hidden layers",
+            "the number of feature and the number of weights in the hidden layers",
+            "the number of features in the dataset",
+            "All other options",
+            "The amount of vectors in the dataset for training"
+        ],
+        "correct": 0
+    }
 ]
