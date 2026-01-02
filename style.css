@@ -37,4 +37,29 @@ button { border: none; padding: 8px 14px; border-radius: 5px; cursor: pointer; f
 
 .correct { background-color: #d4edda !important; border-color: var(--success) !important; color: #155724; pointer-events: none; }
 .wrong { background-color: #f8d7da !important; border-color: var(--error) !important; color: #721c24; }
+
 .disabled { pointer-events: none; opacity: 0.6; }
+
+
+/* Stili per il range personalizzato */
+.custom-range-row {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    margin-top: 5px;
+    flex-wrap: wrap;
+}
+
+.custom-range-row input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 80px;
+    text-align: center;
+    font-size: 14px;
+}
+
+.custom-range-row button:hover {
+    opacity: 0.9;
+}
