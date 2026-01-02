@@ -25,7 +25,16 @@
                 <button class="btn-block" onclick="toggleBlock(7)" data-block="7">121-138</button>
                 <button class="btn-block" onclick="selectAllBlocks()" style="border-color: #333; color: #333;">Tutte</button>
             </div>
-        </div>
+            
+            <div style="margin-top: 10px; border-top: 1px dashed #ccc; padding-top: 10px;">
+                <span class="group-label">Oppure seleziona Range</span>
+                <div class="custom-range-row">
+                    <input type="number" id="start-range" placeholder="Da (es. 10)" min="1">
+                    <input type="number" id="end-range" placeholder="A (es. 50)" min="1">
+                    <button class="btn-block" style="background-color: var(--primary); color: white;" onclick="applyCustomRange()">Applica Range</button>
+                </div>
+            </div>
+            </div>
 
         <div class="btn-row">
             <button class="btn-q" id="q-rand" onclick="setQMode('random')">🔀 Domande Random</button>
@@ -51,7 +60,11 @@ let modeQ = 'ordered';
 let modeA = 'ordered'; 
 let currentQuizSet = [];
 
-// Funzione per caricare il JSON esterno
+// NUOVO: Variabili per gestire il range personalizzato
+let useCustomRange = false;
+let customStart = 1;
+let customEnd = 138;
+
 async function loadAndInit() {
     try {
         const response = await fetch('questions.json');
@@ -59,7 +72,6 @@ async function loadAndInit() {
             throw new Error(`Errore HTTP: ${response.status}`);
         }
         fullDb = await response.json();
-        // Una volta caricati i dati, avvia il quiz
         regenerateQuiz();
     } catch (error) {
         console.error("Impossibile caricare le domande:", error);
@@ -68,7 +80,30 @@ async function loadAndInit() {
     }
 }
 
+// NUOVO: Funzione per applicare il range manuale
+function applyCustomRange() {
+    const sVal = parseInt(document.getElementById('start-range').value);
+    const eVal = parseInt(document.getElementById('end-range').value);
+
+    if(!sVal || !eVal || sVal > eVal || sVal < 1) {
+        alert("Inserisci un range valido (es. Da: 10, A: 50)");
+        return;
+    }
+
+    useCustomRange = true;
+    customStart = sVal;
+    customEnd = eVal;
+
+    // Disattiva visivamente i bottoni dei blocchi
+    document.querySelectorAll('.btn-block').forEach(b => b.classList.remove('active'));
+    
+    regenerateQuiz();
+}
+
 function toggleBlock(b) {
+    // Se clicco un blocco, disattivo la modalità range personalizzato
+    useCustomRange = false; 
+    
     const btn = document.querySelector(`button[data-block="${b}"]`);
     if(activeBlocks.includes(b)) {
         if(activeBlocks.length > 1) {
@@ -83,6 +118,7 @@ function toggleBlock(b) {
 }
 
 function selectAllBlocks() {
+    useCustomRange = false; // Disattivo range custom
     activeBlocks = [1,2,3,4,5,6,7];
     document.querySelectorAll('.btn-block').forEach(b => b.classList.add('active'));
     regenerateQuiz();
@@ -103,18 +139,28 @@ function setAMode(m) {
 }
 
 function regenerateQuiz() {
-    if (fullDb.length === 0) return; // Se il DB non è ancora carico, esci
+    if (fullDb.length === 0) return;
 
     let raw = [];
-    if(activeBlocks.includes(1)) raw = raw.concat(fullDb.slice(0, 20));
-    if(activeBlocks.includes(2)) raw = raw.concat(fullDb.slice(20, 40));
-    if(activeBlocks.includes(3)) raw = raw.concat(fullDb.slice(40, 60));
-    if(activeBlocks.includes(4)) raw = raw.concat(fullDb.slice(60, 80));
-    if(activeBlocks.includes(5)) raw = raw.concat(fullDb.slice(80, 100));
-    if(activeBlocks.includes(6)) raw = raw.concat(fullDb.slice(100, 120));
-    if(activeBlocks.includes(7)) raw = raw.concat(fullDb.slice(120, 138));
+
+    // NUOVO: Logica decisionale (Range Custom VS Blocchi)
+    if (useCustomRange) {
+        // Filtra in base agli ID specificati negli input
+        raw = fullDb.filter(q => q.id >= customStart && q.id <= customEnd);
+    } else {
+        // Logica classica dei blocchi
+        if(activeBlocks.includes(1)) raw = raw.concat(fullDb.slice(0, 20));
+        if(activeBlocks.includes(2)) raw = raw.concat(fullDb.slice(20, 40));
+        if(activeBlocks.includes(3)) raw = raw.concat(fullDb.slice(40, 60));
+        if(activeBlocks.includes(4)) raw = raw.concat(fullDb.slice(60, 80));
+        if(activeBlocks.includes(5)) raw = raw.concat(fullDb.slice(80, 100));
+        if(activeBlocks.includes(6)) raw = raw.concat(fullDb.slice(100, 120));
+        if(activeBlocks.includes(7)) raw = raw.concat(fullDb.slice(120, 138));
+    }
 
     currentQuizSet = JSON.parse(JSON.stringify(raw));
+    
+    // Ordinamento (Random o Sequenziale) si applica anche al range custom
     if(modeQ === 'random') currentQuizSet.sort(() => Math.random() - 0.5);
     else currentQuizSet.sort((a,b) => a.id - b.id);
 
@@ -132,6 +178,13 @@ function regenerateQuiz() {
 function renderQuestions() {
     const container = document.getElementById('quiz-container');
     container.innerHTML = '';
+    
+    if(currentQuizSet.length === 0) {
+        container.innerHTML = '<p style="text-align:center">Nessuna domanda trovata in questo intervallo.</p>';
+        document.getElementById('total-visible').innerText = 0;
+        return;
+    }
+
     document.getElementById('total-visible').innerText = currentQuizSet.length;
     currentQuizSet.forEach(q => {
         const block = document.createElement('div');
@@ -170,7 +223,6 @@ function resetProgress() {
     }
 }
 
-// Avvia il caricamento
 loadAndInit();
 </script>
 </body>
