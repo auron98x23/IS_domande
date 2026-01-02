@@ -2,16 +2,20 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Quiz Master Completo (1-138)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AI Quiz Master</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div class="container">
-    <div class="sticky-header">
-        <h1>AI Quiz Master Completo (1-138)</h1>
-        <div class="score-box">Punteggio (1° tentativo): <span id="score">0</span> / <span id="total-visible">0</span></div>
+    <div class="header-wrapper">
+        <h1>AI Quiz Master (1-138)</h1>
+        
+        <div class="score-box">
+            <div class="score-item">✅ Punti: <span id="score">0</span> / <span id="total-visible">0</span></div>
+            <div class="score-item error-text">❌ Errori: <span id="errors">0</span></div>
+        </div>
 
         <div class="control-group">
             <span class="group-label">Blocchi Domande</span>
@@ -26,27 +30,27 @@
                 <button class="btn-block" onclick="selectAllBlocks()" style="border-color: #333; color: #333;">Tutte</button>
             </div>
             
-            <div style="margin-top: 10px; border-top: 1px dashed #ccc; padding-top: 10px;">
-                <span class="group-label">Oppure seleziona Range</span>
+            <div class="custom-range-wrapper">
+                <span class="group-label">Oppure Range Manuale</span>
                 <div class="custom-range-row">
-                    <input type="number" id="start-range" placeholder="Da (es. 10)" min="1">
-                    <input type="number" id="end-range" placeholder="A (es. 50)" min="1">
-                    <button class="btn-block" style="background-color: var(--primary); color: white;" onclick="applyCustomRange()">Applica Range</button>
+                    <input type="number" id="start-range" placeholder="Da" min="1">
+                    <input type="number" id="end-range" placeholder="A" min="1">
+                    <button class="btn-block btn-apply" onclick="applyCustomRange()">Applica</button>
                 </div>
             </div>
-            </div>
+        </div>
 
-        <div class="btn-row">
+        <div class="btn-row modes-row">
             <button class="btn-q" id="q-rand" onclick="setQMode('random')">🔀 Domande Random</button>
             <button class="btn-q mode-active" id="q-ord" onclick="setQMode('ordered')">🔢 Domande Ordine</button>
             <button class="btn-a" id="a-rand" onclick="setAMode('random')">🔀 Risposte Random</button>
             <button class="btn-a mode-active" id="a-ord" onclick="setAMode('ordered')">ABC Risposte Ordine</button>
         </div>
-        <button class="btn-reset" onclick="resetProgress()">🗑️ Reset Punteggio e Risposte</button>
+        <button class="btn-reset" onclick="resetProgress()">🗑️ Reset Tutto</button>
     </div>
 
     <div id="quiz-container">
-        <p style="text-align: center; color: #666;">Caricamento domande in corso...</p>
+        <p style="text-align: center; color: #666; padding: 20px;">Caricamento domande...</p>
     </div>
 </div>
 
@@ -54,13 +58,13 @@
 let fullDb = [];
 let activeBlocks = [1];
 let score = 0;
+let errors = 0; // Variabile per contare gli errori
 let attempted = new Set();
 let correctFirstTry = new Set();
 let modeQ = 'ordered'; 
 let modeA = 'ordered'; 
 let currentQuizSet = [];
 
-// NUOVO: Variabili per gestire il range personalizzato
 let useCustomRange = false;
 let customStart = 1;
 let customEnd = 138;
@@ -76,34 +80,31 @@ async function loadAndInit() {
     } catch (error) {
         console.error("Impossibile caricare le domande:", error);
         document.getElementById('quiz-container').innerHTML = 
-            "<p style='color:red; text-align:center;'>Errore: Impossibile caricare il file 'questions.json'.<br>Assicurati di avviare questo file tramite un server web (es. GitHub Pages) o un server locale.</p>";
+            "<p style='color:red; text-align:center;'>Errore caricamento 'questions.json'.<br>Usa un server locale o GitHub Pages.</p>";
     }
 }
 
-// NUOVO: Funzione per applicare il range manuale
 function applyCustomRange() {
     const sVal = parseInt(document.getElementById('start-range').value);
     const eVal = parseInt(document.getElementById('end-range').value);
 
     if(!sVal || !eVal || sVal > eVal || sVal < 1) {
-        alert("Inserisci un range valido (es. Da: 10, A: 50)");
+        alert("Inserisci un range valido.");
         return;
     }
 
     useCustomRange = true;
     customStart = sVal;
     customEnd = eVal;
-
-    // Disattiva visivamente i bottoni dei blocchi
-    document.querySelectorAll('.btn-block').forEach(b => b.classList.remove('active'));
-    
+    // Disattiva visivamente i blocchi
+    document.querySelectorAll('.btn-block').forEach(b => {
+        if(!b.classList.contains('btn-apply')) b.classList.remove('active');
+    });
     regenerateQuiz();
 }
 
 function toggleBlock(b) {
-    // Se clicco un blocco, disattivo la modalità range personalizzato
     useCustomRange = false; 
-    
     const btn = document.querySelector(`button[data-block="${b}"]`);
     if(activeBlocks.includes(b)) {
         if(activeBlocks.length > 1) {
@@ -118,9 +119,11 @@ function toggleBlock(b) {
 }
 
 function selectAllBlocks() {
-    useCustomRange = false; // Disattivo range custom
+    useCustomRange = false;
     activeBlocks = [1,2,3,4,5,6,7];
-    document.querySelectorAll('.btn-block').forEach(b => b.classList.add('active'));
+    document.querySelectorAll('.btn-block').forEach(b => {
+        if(!b.classList.contains('btn-apply')) b.classList.add('active');
+    });
     regenerateQuiz();
 }
 
@@ -142,13 +145,9 @@ function regenerateQuiz() {
     if (fullDb.length === 0) return;
 
     let raw = [];
-
-    // NUOVO: Logica decisionale (Range Custom VS Blocchi)
     if (useCustomRange) {
-        // Filtra in base agli ID specificati negli input
         raw = fullDb.filter(q => q.id >= customStart && q.id <= customEnd);
     } else {
-        // Logica classica dei blocchi
         if(activeBlocks.includes(1)) raw = raw.concat(fullDb.slice(0, 20));
         if(activeBlocks.includes(2)) raw = raw.concat(fullDb.slice(20, 40));
         if(activeBlocks.includes(3)) raw = raw.concat(fullDb.slice(40, 60));
@@ -160,7 +159,6 @@ function regenerateQuiz() {
 
     currentQuizSet = JSON.parse(JSON.stringify(raw));
     
-    // Ordinamento (Random o Sequenziale) si applica anche al range custom
     if(modeQ === 'random') currentQuizSet.sort(() => Math.random() - 0.5);
     else currentQuizSet.sort((a,b) => a.id - b.id);
 
@@ -180,7 +178,7 @@ function renderQuestions() {
     container.innerHTML = '';
     
     if(currentQuizSet.length === 0) {
-        container.innerHTML = '<p style="text-align:center">Nessuna domanda trovata in questo intervallo.</p>';
+        container.innerHTML = '<p style="text-align:center">Nessuna domanda trovata.</p>';
         document.getElementById('total-visible').innerText = 0;
         return;
     }
@@ -208,17 +206,31 @@ function handleAnswer(qId, sel, corr, el, cont) {
     if(el.classList.contains('disabled') || el.classList.contains('wrong')) return;
     const first = !attempted.has(qId);
     attempted.add(qId);
+    
     if(sel === corr) {
         el.classList.add('correct');
         Array.from(cont.children).forEach(c => c.classList.add('disabled'));
-        if(first) { score++; correctFirstTry.add(qId); document.getElementById('score').innerText = score; }
-    } else { el.classList.add('wrong'); }
+        if(first) { 
+            score++; 
+            correctFirstTry.add(qId); 
+            document.getElementById('score').innerText = score; 
+        }
+    } else { 
+        el.classList.add('wrong'); 
+        // Incremento errori
+        errors++;
+        document.getElementById('errors').innerText = errors;
+    }
 }
 
 function resetProgress() {
     if(confirm("Azzerare tutto?")) {
-        score = 0; attempted.clear(); correctFirstTry.clear();
+        score = 0; 
+        errors = 0; 
+        attempted.clear(); 
+        correctFirstTry.clear();
         document.getElementById('score').innerText = 0;
+        document.getElementById('errors').innerText = 0;
         regenerateQuiz();
     }
 }
