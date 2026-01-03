@@ -64,6 +64,8 @@
     </div>
 </div>
 
+<button onclick="scrollToTop()" id="btn-back-to-top" class="btn-top" title="Torna su">⬆️</button>
+
 <script>
 let fullDb = [];
 let activeBlocks = [1];
@@ -71,7 +73,7 @@ let score = 0;
 let errors = 0; 
 let attempted = new Set();
 let correctFirstTry = new Set();
-let questionsWithErrors = new Set(); // NUOVO: Traccia domande già contate come errore
+let questionsWithErrors = new Set();
 let modeQ = 'ordered'; 
 let modeA = 'ordered'; 
 let currentQuizSet = [];
@@ -79,6 +81,27 @@ let currentQuizSet = [];
 let useCustomRange = false;
 let customStart = 1;
 let customEnd = 138;
+
+// NUOVO: Logica pulsante Torna Su
+const topBtn = document.getElementById("btn-back-to-top");
+
+window.onscroll = function() {
+    scrollFunction();
+};
+
+function scrollFunction() {
+    // Mostra il pulsante se scorri giù di 300px
+    if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+        topBtn.style.display = "block";
+    } else {
+        topBtn.style.display = "none";
+    }
+}
+
+function scrollToTop() {
+    window.scrollTo({top: 0, behavior: 'smooth'});
+}
+// FINE NUOVO
 
 async function loadAndInit() {
     try {
@@ -154,7 +177,6 @@ function setAMode(m) {
 function regenerateQuiz() {
     if (fullDb.length === 0) return;
 
-    // Reset parziale per nuova generazione
     document.getElementById('error-list').innerHTML = '';
     document.getElementById('error-panel').style.display = 'none';
 
@@ -185,7 +207,6 @@ function regenerateQuiz() {
         });
     }
     
-    // Reset statistiche visive se si cambia configurazione
     updateGrade();
     renderQuestions();
 }
@@ -201,12 +222,12 @@ function renderQuestions() {
     }
 
     document.getElementById('total-visible').innerText = currentQuizSet.length;
-    updateGrade(); // Aggiorna il voto basato sul nuovo totale
+    updateGrade(); 
 
     currentQuizSet.forEach(q => {
         const block = document.createElement('div');
         block.className = 'question-block';
-        block.id = 'q-' + q.id; // ID per l'ancoraggio
+        block.id = 'q-' + q.id; 
         
         block.innerHTML = `<div class="question-header"><span class="q-badge">#${q.id}</span> <span>${q.q}</span></div>`;
         const optsDiv = document.createElement('div');
@@ -242,7 +263,6 @@ function handleAnswer(qId, sel, corr, el, cont) {
     } else { 
         el.classList.add('wrong'); 
         
-        // NUOVO: Conta errore solo se non è già stato contato per questa domanda
         if(!questionsWithErrors.has(qId)) {
             errors++;
             questionsWithErrors.add(qId);
@@ -252,32 +272,24 @@ function handleAnswer(qId, sel, corr, el, cont) {
     }
 }
 
-// NUOVO: Calcola e aggiorna il voto in 30esimi
 function updateGrade() {
     const total = currentQuizSet.length;
     if(total === 0) {
         document.getElementById('grade').innerText = "0.0";
         return;
     }
-    // Formula: (Punteggio / Totale) * 30
     const grade = (score / total) * 30;
     document.getElementById('grade').innerText = grade.toFixed(1);
 }
 
-// NUOVO: Aggiunge il link al pannello errori
 function addToErrorList(qId) {
     const list = document.getElementById('error-list');
     const link = document.createElement('a');
     link.href = '#q-' + qId;
     link.className = 'error-link';
     link.innerText = '#' + qId;
-    link.onclick = () => {
-        // Fix per mobile: chiude l'header se necessario o gestisce lo scroll
-        // Lo scroll automatico dell'ancora HTML standard funziona, ma il CSS scroll-margin aiuta
-    };
     list.appendChild(link);
     
-    // Mostra automaticamente il pannello se è il primo errore (opzionale, qui lo lascio manuale o visibile)
     const panel = document.getElementById('error-panel');
     if(panel.style.display === 'none') panel.style.display = 'block';
 }
@@ -293,7 +305,7 @@ function resetProgress() {
         errors = 0; 
         attempted.clear(); 
         correctFirstTry.clear();
-        questionsWithErrors.clear(); // Reset set errori
+        questionsWithErrors.clear(); 
         
         document.getElementById('score').innerText = 0;
         document.getElementById('errors').innerText = 0;
@@ -302,7 +314,6 @@ function resetProgress() {
         
         updateGrade();
         regenerateQuiz();
-        // Scroll to top
         window.scrollTo(0, 0);
     }
 }
