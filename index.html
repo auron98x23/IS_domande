@@ -13,16 +13,13 @@
         <h1>AI Quiz Master (1-138)</h1>
         
         <div class="score-box">
-            <div class="score-item">✅ Punti: <span id="score">0</span></div>
+            <div class="score-item">✅ Punti: <span id="score">0</span> / <span id="total-visible">0</span></div>
             <div class="score-item error-text">❌ Errori: <span id="errors">0</span></div>
             <div class="score-item grade-text">🎓 Voto: <span id="grade">0.0</span>/30</div>
         </div>
 
         <div id="error-panel" class="error-panel" style="display: none;">
-            <div class="error-header">
-                <span class="error-label">Domande Errate in questa sessione:</span>
-                <button class="btn-small-close" onclick="toggleErrorPanel()">Chiudi</button>
-            </div>
+            <span class="error-label">Indice Errori:</span>
             <div id="error-list" class="error-list"></div>
         </div>
 
@@ -57,12 +54,9 @@
         </div>
         
         <div class="btn-row actions-row">
-            <button class="btn-reset" onclick="resetProgress()">🗑️ Reset Sessione</button>
-            <button class="btn-toggle-list" onclick="toggleErrorPanel()">⚠️ Vedi Errori</button>
-            <button class="btn-error-review" id="btn-review-mode" onclick="toggleErrorReviewMode()">❌ Ripassa I Miei Errori</button>
-        </div>
-        <div style="text-align:center; font-size: 0.8em; color: #888; margin-top:5px;">
-            Storico Totale: <span id="global-errors">0</span> errori registrati
+            <button class="btn-reset" onclick="resetProgress()">🗑️ Reset</button>
+            <button class="btn-toggle-list" onclick="toggleErrorPanel()">📋 Lista Errori</button>
+            <button class="btn-error-review" id="btn-review-mode" onclick="toggleErrorReviewMode()">❌ Ripeti Errori</button>
         </div>
     </div>
 
@@ -74,42 +68,24 @@
 <button onclick="scrollToTop()" id="btn-back-to-top" class="btn-top" title="Torna su">⬆️</button>
 
 <script>
-// --- CONFIGURAZIONE ---
 let fullDb = [];
 let activeBlocks = [1];
 let score = 0;
 let errors = 0; 
 let attempted = new Set();
 let correctFirstTry = new Set();
-let questionsWithErrors = new Set(); // Traccia errori sessione (per non contarli doppi)
-let currentQuizSet = [];
-
-// Stato Account Locale
-let userHistory = { errorCounts: {}, totalErrors: 0 };
-
+let questionsWithErrors = new Set(); 
 let modeQ = 'ordered'; 
 let modeA = 'ordered'; 
+let currentQuizSet = [];
+
 let useCustomRange = false;
 let customStart = 1;
 let customEnd = 138;
+
+// NUOVO: Modalità revisione errori
 let reviewErrorsMode = false;
 
-// --- GESTIONE ACCOUNT LOCALE ---
-function loadUserHistory() {
-    try {
-        const saved = localStorage.getItem('aiQuizHistory_v1');
-        if (saved) userHistory = JSON.parse(saved);
-        if (!userHistory.errorCounts) userHistory.errorCounts = {};
-        document.getElementById('global-errors').innerText = userHistory.totalErrors || 0;
-    } catch(e) { console.log("Errore caricamento storico", e); }
-}
-
-function saveUserHistory() {
-    localStorage.setItem('aiQuizHistory_v1', JSON.stringify(userHistory));
-    document.getElementById('global-errors').innerText = userHistory.totalErrors;
-}
-
-// --- FUNZIONI UI ---
 const topBtn = document.getElementById("btn-back-to-top");
 window.onscroll = function() {
     if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
@@ -118,18 +94,19 @@ window.onscroll = function() {
         topBtn.style.display = "none";
     }
 };
-function scrollToTop() { window.scrollTo({top: 0, behavior: 'smooth'}); }
+function scrollToTop() {
+    window.scrollTo({top: 0, behavior: 'smooth'});
+}
 
 async function loadAndInit() {
     try {
-        loadUserHistory();
         const response = await fetch('questions.json');
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         fullDb = await response.json();
         regenerateQuiz();
     } catch (error) {
         console.error(error);
-        document.getElementById('quiz-container').innerHTML = "<p style='color:red;text-align:center'>Errore: impossibile caricare 'questions.json'. Assicurati di usare un server web.</p>";
+        document.getElementById('quiz-container').innerHTML = "<p style='color:red;text-align:center'>Errore caricamento dati.</p>";
     }
 }
 
@@ -141,7 +118,7 @@ function applyCustomRange() {
         return;
     }
     useCustomRange = true;
-    reviewErrorsMode = false;
+    reviewErrorsMode = false; // Disattiva modalità errori se cambio range
     customStart = sVal;
     customEnd = eVal;
     updateUIButtons();
@@ -150,10 +127,12 @@ function applyCustomRange() {
 
 function toggleBlock(b) {
     useCustomRange = false;
-    reviewErrorsMode = false;
+    reviewErrorsMode = false; // Disattiva modalità errori se cambio blocco
     const btn = document.querySelector(`button[data-block="${b}"]`);
     if(activeBlocks.includes(b)) {
-        if(activeBlocks.length > 1) activeBlocks = activeBlocks.filter(x => x !== b);
+        if(activeBlocks.length > 1) {
+            activeBlocks = activeBlocks.filter(x => x !== b);
+        }
     } else {
         activeBlocks.push(b);
     }
@@ -169,30 +148,34 @@ function selectAllBlocks() {
     regenerateQuiz();
 }
 
+// NUOVO: Funzione per attivare/disattivare la modalità "Solo Errori"
 function toggleErrorReviewMode() {
-    const errorIds = Object.keys(userHistory.errorCounts);
-    if (errorIds.length === 0) {
-        alert("Non hai ancora errori nello storico da ripassare.");
+    if (questionsWithErrors.size === 0) {
+        alert("Non hai ancora commesso errori da ripassare! Ottimo lavoro.");
         return;
     }
     reviewErrorsMode = !reviewErrorsMode;
+    
     const btn = document.getElementById('btn-review-mode');
     if (reviewErrorsMode) {
         btn.innerHTML = "🔙 Torna al Quiz";
         btn.classList.add('active-review');
     } else {
-        btn.innerHTML = "❌ Ripassa I Miei Errori";
+        btn.innerHTML = "❌ Ripeti Errori";
         btn.classList.remove('active-review');
     }
+    
+    // Aggiorna anche lo stato visuale degli altri bottoni
     updateUIButtons();
     regenerateQuiz();
 }
 
 function updateUIButtons() {
+    // Gestisce lo stato "active" dei bottoni blocchi
     document.querySelectorAll('.btn-block').forEach(btn => {
         if (reviewErrorsMode) {
             btn.classList.remove('active');
-            btn.style.opacity = '0.5';
+            btn.style.opacity = '0.5'; // Li rende semitrasparenti in modalità review
         } else {
             btn.style.opacity = '1';
             const blk = parseInt(btn.getAttribute('data-block'));
@@ -200,221 +183,4 @@ function updateUIButtons() {
                 if (activeBlocks.includes(blk) && !useCustomRange) btn.classList.add('active');
                 else btn.classList.remove('active');
             } else if (btn.innerHTML === "Tutte") {
-                 if(activeBlocks.length === 7 && !useCustomRange) btn.classList.add('active');
-                 else btn.classList.remove('active');
-            }
-        }
-    });
-}
-
-function setQMode(m) {
-    modeQ = m;
-    document.getElementById('q-rand').classList.toggle('mode-active', m === 'random');
-    document.getElementById('q-ord').classList.toggle('mode-active', m === 'ordered');
-    regenerateQuiz();
-}
-
-function setAMode(m) {
-    modeA = m;
-    document.getElementById('a-rand').classList.toggle('mode-active', m === 'random');
-    document.getElementById('a-ord').classList.toggle('mode-active', m === 'ordered');
-    regenerateQuiz();
-}
-
-function regenerateQuiz() {
-    if (fullDb.length === 0) return;
-
-    // Reset UI Parziale
-    document.getElementById('error-list').innerHTML = '';
-    document.getElementById('error-panel').style.display = 'none';
-    questionsWithErrors.clear(); // Reset errori sessione visuale
-    // Nota: Manteniamo score/errors sessione finché utente non resetta esplicitamente
-
-    let raw = [];
-
-    if (reviewErrorsMode) {
-        // Logica Ripasso: mostra domande dello storico ordinate per frequenza errore
-        const errorIds = Object.keys(userHistory.errorCounts).map(Number);
-        raw = fullDb.filter(q => errorIds.includes(q.id));
-        // Ordina: chi ha più errori appare prima
-        raw.sort((a, b) => (userHistory.errorCounts[b.id] || 0) - (userHistory.errorCounts[a.id] || 0));
-    } else if (useCustomRange) {
-        raw = fullDb.filter(q => q.id >= customStart && q.id <= customEnd);
-        if(modeQ === 'random') raw.sort(() => Math.random() - 0.5);
-        else raw.sort((a,b) => a.id - b.id);
-    } else {
-        // Logica standard blocchi
-        if(activeBlocks.includes(1)) raw = raw.concat(fullDb.slice(0, 20));
-        if(activeBlocks.includes(2)) raw = raw.concat(fullDb.slice(20, 40));
-        if(activeBlocks.includes(3)) raw = raw.concat(fullDb.slice(40, 60));
-        if(activeBlocks.includes(4)) raw = raw.concat(fullDb.slice(60, 80));
-        if(activeBlocks.includes(5)) raw = raw.concat(fullDb.slice(80, 100));
-        if(activeBlocks.includes(6)) raw = raw.concat(fullDb.slice(100, 120));
-        if(activeBlocks.includes(7)) raw = raw.concat(fullDb.slice(120, 138));
-        
-        if(modeQ === 'random') raw.sort(() => Math.random() - 0.5);
-    }
-
-    currentQuizSet = JSON.parse(JSON.stringify(raw));
-
-    if(modeA === 'random') {
-        currentQuizSet.forEach(q => {
-            let optsIdx = q.options.map((o, idx) => ({ t: o, orig: idx }));
-            optsIdx.sort(() => Math.random() - 0.5);
-            q.options = optsIdx.map(o => o.t);
-            q.correct = optsIdx.findIndex(o => o.orig === q.correct);
-        });
-    }
-    
-    updateGrade();
-    renderQuestions();
-}
-
-function renderQuestions() {
-    const container = document.getElementById('quiz-container');
-    container.innerHTML = '';
-    
-    if(currentQuizSet.length === 0) {
-        container.innerHTML = '<p style="text-align:center">Nessuna domanda trovata.</p>';
-        document.getElementById('total-visible').innerText = 0;
-        return;
-    }
-
-    document.getElementById('total-visible').innerText = currentQuizSet.length;
-    updateGrade();
-
-    currentQuizSet.forEach(q => {
-        const block = document.createElement('div');
-        block.className = 'question-block';
-        block.id = 'q-' + q.id; 
-        
-        // Se siamo in ripasso, mostra quante volte l'abbiamo sbagliata
-        let badgeInfo = `#${q.id}`;
-        if (reviewErrorsMode) {
-            const errCount = userHistory.errorCounts[q.id] || 0;
-            badgeInfo += ` (Sbagliata ${errCount} volte)`;
-        }
-
-        block.innerHTML = `<div class="question-header">
-            <span class="q-badge" ${reviewErrorsMode ? 'style="background:#ffcccb"' : ''}>${badgeInfo}</span> 
-            <span>${q.q}</span>
-        </div>`;
-        
-        const optsDiv = document.createElement('div');
-        optsDiv.className = 'options';
-        q.options.forEach((txt, i) => {
-            const label = document.createElement('div');
-            label.className = 'option-label';
-            label.innerText = txt;
-            label.onclick = () => handleAnswer(q.id, i, q.correct, label, optsDiv);
-            optsDiv.appendChild(label);
-        });
-        block.appendChild(optsDiv);
-        container.appendChild(block);
-    });
-}
-
-function handleAnswer(qId, sel, corr, el, cont) {
-    if(el.classList.contains('disabled') || el.classList.contains('wrong')) return;
-    
-    const isFirstAttempt = !attempted.has(qId);
-    attempted.add(qId);
-    
-    if(sel === corr) {
-        el.classList.add('correct');
-        Array.from(cont.children).forEach(c => c.classList.add('disabled'));
-        
-        if(isFirstAttempt) { 
-            score++; 
-            correctFirstTry.add(qId); 
-            document.getElementById('score').innerText = score;
-            updateGrade();
-        }
-    } else { 
-        el.classList.add('wrong'); 
-        
-        // --- LOGICA ERRORI (Richiesta 1) ---
-        // Contiamo l'errore solo se è la prima volta che sbagliamo QUESTA domanda in QUESTA sessione
-        if(!questionsWithErrors.has(qId)) {
-            errors++;
-            questionsWithErrors.add(qId); // Segna che questa domanda è già stata contata come errore
-            document.getElementById('errors').innerText = errors;
-            
-            // Aggiungi alla lista visibile
-            addToErrorPanel(qId);
-
-            // --- LOGICA ACCOUNT (Richiesta 4) ---
-            // Aggiorna storico persistente
-            if (!userHistory.errorCounts[qId]) userHistory.errorCounts[qId] = 0;
-            userHistory.errorCounts[qId]++;
-            userHistory.totalErrors = (userHistory.totalErrors || 0) + 1;
-            saveUserHistory();
-        }
-    }
-}
-
-// --- LOGICA VOTO (Richiesta 2) ---
-function updateGrade() {
-    const total = currentQuizSet.length;
-    if(total === 0) {
-        document.getElementById('grade').innerText = "0.0";
-        return;
-    }
-    // Voto = (Punteggio / Totale Domande Visibili) * 30
-    const grade = (score / total) * 30;
-    document.getElementById('grade').innerText = grade.toFixed(1);
-}
-
-// --- LOGICA LISTA ERRORI (Richiesta 3) ---
-function addToErrorPanel(qId) {
-    const list = document.getElementById('error-list');
-    const link = document.createElement('a');
-    link.href = 'javascript:void(0)'; // Evita reload
-    link.className = 'error-link';
-    link.innerText = '#' + qId;
-    link.onclick = () => {
-        const el = document.getElementById('q-' + qId);
-        if(el) {
-            // Scroll con offset per header sticky
-            const y = el.getBoundingClientRect().top + window.pageYOffset - 180;
-            window.scrollTo({top: y, behavior: 'smooth'});
-            // Effetto flash
-            el.style.border = "2px solid red";
-            setTimeout(() => el.style.border = "1px solid #ddd", 1500);
-        } else {
-            alert("Questa domanda non è caricata nel set attuale.");
-        }
-    };
-    list.appendChild(link);
-    // Mostra il pannello se è il primo errore
-    document.getElementById('error-panel').style.display = 'block';
-}
-
-function toggleErrorPanel() {
-    const panel = document.getElementById('error-panel');
-    panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
-}
-
-function resetProgress() {
-    if(confirm("Vuoi azzerare la sessione corrente? (Lo storico totale rimane salvato)")) {
-        score = 0; 
-        errors = 0; 
-        attempted.clear(); 
-        correctFirstTry.clear();
-        questionsWithErrors.clear(); 
-        
-        document.getElementById('score').innerText = 0;
-        document.getElementById('errors').innerText = 0;
-        document.getElementById('error-list').innerHTML = '';
-        document.getElementById('error-panel').style.display = 'none';
-        
-        updateGrade();
-        regenerateQuiz();
-        window.scrollTo(0, 0);
-    }
-}
-
-loadAndInit();
-</script>
-</body>
-</html>
+                 // Logica per bottone "Tutte" (semplific
