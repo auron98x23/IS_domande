@@ -82,7 +82,7 @@ let useCustomRange = false;
 let customStart = 1;
 let customEnd = 138;
 
-// NUOVO: Logica pulsante Torna Su
+// Gestione pulsante Torna Su
 const topBtn = document.getElementById("btn-back-to-top");
 
 window.onscroll = function() {
@@ -90,7 +90,6 @@ window.onscroll = function() {
 };
 
 function scrollFunction() {
-    // Mostra il pulsante se scorri giù di 300px
     if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
         topBtn.style.display = "block";
     } else {
@@ -101,7 +100,6 @@ function scrollFunction() {
 function scrollToTop() {
     window.scrollTo({top: 0, behavior: 'smooth'});
 }
-// FINE NUOVO
 
 async function loadAndInit() {
     try {
@@ -114,7 +112,7 @@ async function loadAndInit() {
     } catch (error) {
         console.error("Impossibile caricare le domande:", error);
         document.getElementById('quiz-container').innerHTML = 
-            "<p style='color:red; text-align:center;'>Errore caricamento 'questions.json'.<br>Usa un server locale o GitHub Pages.</p>";
+            "<p style='color:red; text-align:center;'>Errore caricamento 'questions.json'.<br>Usa un server locale o GitHub Pages e controlla che il file si chiami esattamente questions.json</p>";
     }
 }
 
@@ -177,6 +175,7 @@ function setAMode(m) {
 function regenerateQuiz() {
     if (fullDb.length === 0) return;
 
+    // Reset visuale pannello errori
     document.getElementById('error-list').innerHTML = '';
     document.getElementById('error-panel').style.display = 'none';
 
@@ -193,11 +192,14 @@ function regenerateQuiz() {
         if(activeBlocks.includes(7)) raw = raw.concat(fullDb.slice(120, 138));
     }
 
+    // Copia profonda per evitare riferimenti
     currentQuizSet = JSON.parse(JSON.stringify(raw));
     
+    // Ordinamento domande
     if(modeQ === 'random') currentQuizSet.sort(() => Math.random() - 0.5);
     else currentQuizSet.sort((a,b) => a.id - b.id);
 
+    // Ordinamento risposte
     if(modeA === 'random') {
         currentQuizSet.forEach(q => {
             let optsIdx = q.options.map((o, idx) => ({ t: o, orig: idx }));
@@ -213,7 +215,7 @@ function regenerateQuiz() {
 
 function renderQuestions() {
     const container = document.getElementById('quiz-container');
-    container.innerHTML = '';
+    container.innerHTML = ''; // Pulisce il contenitore rimuovendo vecchie domande e classi
     
     if(currentQuizSet.length === 0) {
         container.innerHTML = '<p style="text-align:center">Nessuna domanda trovata.</p>';
@@ -252,6 +254,7 @@ function handleAnswer(qId, sel, corr, el, cont) {
     
     if(sel === corr) {
         el.classList.add('correct');
+        // Disabilita tutte le opzioni in questo contenitore
         Array.from(cont.children).forEach(c => c.classList.add('disabled'));
         
         if(isFirstAttempt) { 
@@ -299,23 +302,40 @@ function toggleErrorPanel() {
     panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
 }
 
+// Funzione RESET aggiornata e corretta
 function resetProgress() {
-    if(confirm("Azzerare tutto?")) {
-        score = 0; 
-        errors = 0; 
-        attempted.clear(); 
-        correctFirstTry.clear();
-        questionsWithErrors.clear(); 
-        
-        document.getElementById('score').innerText = 0;
-        document.getElementById('errors').innerText = 0;
-        document.getElementById('error-list').innerHTML = '';
-        document.getElementById('error-panel').style.display = 'none';
-        
-        updateGrade();
-        regenerateQuiz();
-        window.scrollTo(0, 0);
+    // 1. Chiede conferma
+    if (!confirm("Sei sicuro di voler azzerare punteggio e risposte?")) {
+        return;
     }
+
+    // 2. Azzera le variabili logiche
+    score = 0;
+    errors = 0;
+    attempted.clear();
+    correctFirstTry.clear();
+    questionsWithErrors.clear();
+
+    // 3. Azzera immediatamente l'interfaccia
+    document.getElementById('score').innerText = '0';
+    document.getElementById('errors').innerText = '0';
+    document.getElementById('grade').innerText = '0.0';
+    
+    const errorList = document.getElementById('error-list');
+    if(errorList) errorList.innerHTML = '';
+    
+    const errorPanel = document.getElementById('error-panel');
+    if(errorPanel) errorPanel.style.display = 'none';
+
+    // 4. Scroll in alto per feedback visivo
+    window.scrollTo({top: 0, behavior: 'auto'});
+
+    // 5. Rigenera il quiz con un piccolo ritardo per permettere il rendering
+    setTimeout(() => {
+        regenerateQuiz();
+        // Forza l'aggiornamento del voto dopo la rigenerazione
+        updateGrade();
+    }, 50);
 }
 
 loadAndInit();
