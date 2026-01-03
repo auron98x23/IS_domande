@@ -63,7 +63,7 @@ h1 {
 }
 
 .error-text { color: #ffcccb; }
-.grade-text { color: #fff700; } /* Giallo per il voto */
+.grade-text { color: #fff700; } 
 
 /* Pannello Errori */
 .error-panel {
@@ -139,9 +139,31 @@ button {
 .btn-q { background-color: var(--q-shuffle); }
 .btn-a { background-color: var(--a-shuffle); }
 .btn-reset { background-color: #7f8c8d; flex: 2; margin-top: 5px; }
-.btn-error-toggle { background-color: #e67e22; flex: 1; margin-top: 5px; } /* Bottone arancione */
+.btn-error-toggle { background-color: #e67e22; flex: 1; margin-top: 5px; }
 
 .mode-active { outline: 2px solid #000; box-shadow: 0 0 8px rgba(0,0,0,0.4); }
+
+/* NUOVO: Stile Bottone Torna Su */
+.btn-top {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    display: none; /* Nascosto di default */
+    background-color: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    z-index: 2000;
+}
+.btn-top:hover {
+    background-color: var(--primary);
+    transform: scale(1.1);
+}
 
 /* Range personalizzato */
 .custom-range-wrapper {
