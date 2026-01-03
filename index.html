@@ -15,6 +15,12 @@
         <div class="score-box">
             <div class="score-item">✅ Punti: <span id="score">0</span> / <span id="total-visible">0</span></div>
             <div class="score-item error-text">❌ Errori: <span id="errors">0</span></div>
+            <div class="score-item grade-text">🎓 Voto: <span id="grade">0.0</span>/30</div>
+        </div>
+
+        <div id="error-panel" class="error-panel" style="display: none;">
+            <span class="error-label">Domande Errate (Clicca per andare):</span>
+            <div id="error-list" class="error-list"></div>
         </div>
 
         <div class="control-group">
@@ -46,7 +52,11 @@
             <button class="btn-a" id="a-rand" onclick="setAMode('random')">🔀 Risposte Random</button>
             <button class="btn-a mode-active" id="a-ord" onclick="setAMode('ordered')">ABC Risposte Ordine</button>
         </div>
-        <button class="btn-reset" onclick="resetProgress()">🗑️ Reset Tutto</button>
+        
+        <div class="btn-row">
+            <button class="btn-reset" onclick="resetProgress()">🗑️ Reset Tutto</button>
+            <button class="btn-error-toggle" onclick="toggleErrorPanel()">⚠️ Vedi Errori</button>
+        </div>
     </div>
 
     <div id="quiz-container">
@@ -58,9 +68,10 @@
 let fullDb = [];
 let activeBlocks = [1];
 let score = 0;
-let errors = 0; // Variabile per contare gli errori
+let errors = 0; 
 let attempted = new Set();
 let correctFirstTry = new Set();
+let questionsWithErrors = new Set(); // NUOVO: Traccia domande già contate come errore
 let modeQ = 'ordered'; 
 let modeA = 'ordered'; 
 let currentQuizSet = [];
@@ -96,7 +107,6 @@ function applyCustomRange() {
     useCustomRange = true;
     customStart = sVal;
     customEnd = eVal;
-    // Disattiva visivamente i blocchi
     document.querySelectorAll('.btn-block').forEach(b => {
         if(!b.classList.contains('btn-apply')) b.classList.remove('active');
     });
@@ -144,6 +154,10 @@ function setAMode(m) {
 function regenerateQuiz() {
     if (fullDb.length === 0) return;
 
+    // Reset parziale per nuova generazione
+    document.getElementById('error-list').innerHTML = '';
+    document.getElementById('error-panel').style.display = 'none';
+
     let raw = [];
     if (useCustomRange) {
         raw = fullDb.filter(q => q.id >= customStart && q.id <= customEnd);
@@ -170,6 +184,9 @@ function regenerateQuiz() {
             q.correct = optsIdx.findIndex(o => o.orig === q.correct);
         });
     }
+    
+    // Reset statistiche visive se si cambia configurazione
+    updateGrade();
     renderQuestions();
 }
 
@@ -184,9 +201,13 @@ function renderQuestions() {
     }
 
     document.getElementById('total-visible').innerText = currentQuizSet.length;
+    updateGrade(); // Aggiorna il voto basato sul nuovo totale
+
     currentQuizSet.forEach(q => {
         const block = document.createElement('div');
         block.className = 'question-block';
+        block.id = 'q-' + q.id; // ID per l'ancoraggio
+        
         block.innerHTML = `<div class="question-header"><span class="q-badge">#${q.id}</span> <span>${q.q}</span></div>`;
         const optsDiv = document.createElement('div');
         optsDiv.className = 'options';
@@ -204,23 +225,66 @@ function renderQuestions() {
 
 function handleAnswer(qId, sel, corr, el, cont) {
     if(el.classList.contains('disabled') || el.classList.contains('wrong')) return;
-    const first = !attempted.has(qId);
+    
+    const isFirstAttempt = !attempted.has(qId);
     attempted.add(qId);
     
     if(sel === corr) {
         el.classList.add('correct');
         Array.from(cont.children).forEach(c => c.classList.add('disabled'));
-        if(first) { 
+        
+        if(isFirstAttempt) { 
             score++; 
             correctFirstTry.add(qId); 
-            document.getElementById('score').innerText = score; 
+            document.getElementById('score').innerText = score;
+            updateGrade();
         }
     } else { 
         el.classList.add('wrong'); 
-        // Incremento errori
-        errors++;
-        document.getElementById('errors').innerText = errors;
+        
+        // NUOVO: Conta errore solo se non è già stato contato per questa domanda
+        if(!questionsWithErrors.has(qId)) {
+            errors++;
+            questionsWithErrors.add(qId);
+            document.getElementById('errors').innerText = errors;
+            addToErrorList(qId);
+        }
     }
+}
+
+// NUOVO: Calcola e aggiorna il voto in 30esimi
+function updateGrade() {
+    const total = currentQuizSet.length;
+    if(total === 0) {
+        document.getElementById('grade').innerText = "0.0";
+        return;
+    }
+    // Formula: (Punteggio / Totale) * 30
+    const grade = (score / total) * 30;
+    document.getElementById('grade').innerText = grade.toFixed(1);
+}
+
+// NUOVO: Aggiunge il link al pannello errori
+function addToErrorList(qId) {
+    const list = document.getElementById('error-list');
+    const link = document.createElement('a');
+    link.href = '#q-' + qId;
+    link.className = 'error-link';
+    link.innerText = '#' + qId;
+    link.onclick = () => {
+        // Fix per mobile: chiude l'header se necessario o gestisce lo scroll
+        // Lo scroll automatico dell'ancora HTML standard funziona, ma il CSS scroll-margin aiuta
+    };
+    list.appendChild(link);
+    
+    // Mostra automaticamente il pannello se è il primo errore (opzionale, qui lo lascio manuale o visibile)
+    const panel = document.getElementById('error-panel');
+    if(panel.style.display === 'none') panel.style.display = 'block';
+}
+
+function toggleErrorPanel() {
+    const panel = document.getElementById('error-panel');
+    panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
 }
 
 function resetProgress() {
@@ -229,9 +293,17 @@ function resetProgress() {
         errors = 0; 
         attempted.clear(); 
         correctFirstTry.clear();
+        questionsWithErrors.clear(); // Reset set errori
+        
         document.getElementById('score').innerText = 0;
         document.getElementById('errors').innerText = 0;
+        document.getElementById('error-list').innerHTML = '';
+        document.getElementById('error-panel').style.display = 'none';
+        
+        updateGrade();
         regenerateQuiz();
+        // Scroll to top
+        window.scrollTo(0, 0);
     }
 }
 
