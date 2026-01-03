@@ -19,7 +19,7 @@
         </div>
 
         <div id="error-panel" class="error-panel" style="display: none;">
-            <span class="error-label">Indice Errori:</span>
+            <span class="error-label">Domande Errate (Clicca per andare):</span>
             <div id="error-list" class="error-list"></div>
         </div>
 
@@ -53,10 +53,9 @@
             <button class="btn-a mode-active" id="a-ord" onclick="setAMode('ordered')">ABC Risposte Ordine</button>
         </div>
         
-        <div class="btn-row actions-row">
-            <button class="btn-reset" onclick="resetProgress()">🗑️ Reset</button>
-            <button class="btn-toggle-list" onclick="toggleErrorPanel()">📋 Lista Errori</button>
-            <button class="btn-error-review" id="btn-review-mode" onclick="toggleErrorReviewMode()">❌ Ripeti Errori</button>
+        <div class="btn-row">
+            <button class="btn-reset" onclick="resetProgress()">🗑️ Reset Tutto</button>
+            <button class="btn-error-toggle" onclick="toggleErrorPanel()">⚠️ Vedi Errori</button>
         </div>
     </div>
 
@@ -74,7 +73,7 @@ let score = 0;
 let errors = 0; 
 let attempted = new Set();
 let correctFirstTry = new Set();
-let questionsWithErrors = new Set(); 
+let questionsWithErrors = new Set();
 let modeQ = 'ordered'; 
 let modeA = 'ordered'; 
 let currentQuizSet = [];
@@ -83,104 +82,243 @@ let useCustomRange = false;
 let customStart = 1;
 let customEnd = 138;
 
-// NUOVO: Modalità revisione errori
-let reviewErrorsMode = false;
-
+// NUOVO: Logica pulsante Torna Su
 const topBtn = document.getElementById("btn-back-to-top");
+
 window.onscroll = function() {
+    scrollFunction();
+};
+
+function scrollFunction() {
+    // Mostra il pulsante se scorri giù di 300px
     if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
         topBtn.style.display = "block";
     } else {
         topBtn.style.display = "none";
     }
-};
+}
+
 function scrollToTop() {
     window.scrollTo({top: 0, behavior: 'smooth'});
 }
+// FINE NUOVO
 
 async function loadAndInit() {
     try {
         const response = await fetch('questions.json');
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        if (!response.ok) {
+            throw new Error(`Errore HTTP: ${response.status}`);
+        }
         fullDb = await response.json();
         regenerateQuiz();
     } catch (error) {
-        console.error(error);
-        document.getElementById('quiz-container').innerHTML = "<p style='color:red;text-align:center'>Errore caricamento dati.</p>";
+        console.error("Impossibile caricare le domande:", error);
+        document.getElementById('quiz-container').innerHTML = 
+            "<p style='color:red; text-align:center;'>Errore caricamento 'questions.json'.<br>Usa un server locale o GitHub Pages.</p>";
     }
 }
 
 function applyCustomRange() {
     const sVal = parseInt(document.getElementById('start-range').value);
     const eVal = parseInt(document.getElementById('end-range').value);
+
     if(!sVal || !eVal || sVal > eVal || sVal < 1) {
-        alert("Range non valido.");
+        alert("Inserisci un range valido.");
         return;
     }
+
     useCustomRange = true;
-    reviewErrorsMode = false; // Disattiva modalità errori se cambio range
     customStart = sVal;
     customEnd = eVal;
-    updateUIButtons();
+    document.querySelectorAll('.btn-block').forEach(b => {
+        if(!b.classList.contains('btn-apply')) b.classList.remove('active');
+    });
     regenerateQuiz();
 }
 
 function toggleBlock(b) {
-    useCustomRange = false;
-    reviewErrorsMode = false; // Disattiva modalità errori se cambio blocco
+    useCustomRange = false; 
     const btn = document.querySelector(`button[data-block="${b}"]`);
     if(activeBlocks.includes(b)) {
         if(activeBlocks.length > 1) {
             activeBlocks = activeBlocks.filter(x => x !== b);
+            btn.classList.remove('active');
         }
     } else {
         activeBlocks.push(b);
+        btn.classList.add('active');
     }
-    updateUIButtons();
     regenerateQuiz();
 }
 
 function selectAllBlocks() {
     useCustomRange = false;
-    reviewErrorsMode = false;
     activeBlocks = [1,2,3,4,5,6,7];
-    updateUIButtons();
+    document.querySelectorAll('.btn-block').forEach(b => {
+        if(!b.classList.contains('btn-apply')) b.classList.add('active');
+    });
     regenerateQuiz();
 }
 
-// NUOVO: Funzione per attivare/disattivare la modalità "Solo Errori"
-function toggleErrorReviewMode() {
-    if (questionsWithErrors.size === 0) {
-        alert("Non hai ancora commesso errori da ripassare! Ottimo lavoro.");
+function setQMode(m) {
+    modeQ = m;
+    document.getElementById('q-rand').classList.toggle('mode-active', m === 'random');
+    document.getElementById('q-ord').classList.toggle('mode-active', m === 'ordered');
+    regenerateQuiz();
+}
+
+function setAMode(m) {
+    modeA = m;
+    document.getElementById('a-rand').classList.toggle('mode-active', m === 'random');
+    document.getElementById('a-ord').classList.toggle('mode-active', m === 'ordered');
+    regenerateQuiz();
+}
+
+function regenerateQuiz() {
+    if (fullDb.length === 0) return;
+
+    document.getElementById('error-list').innerHTML = '';
+    document.getElementById('error-panel').style.display = 'none';
+
+    let raw = [];
+    if (useCustomRange) {
+        raw = fullDb.filter(q => q.id >= customStart && q.id <= customEnd);
+    } else {
+        if(activeBlocks.includes(1)) raw = raw.concat(fullDb.slice(0, 20));
+        if(activeBlocks.includes(2)) raw = raw.concat(fullDb.slice(20, 40));
+        if(activeBlocks.includes(3)) raw = raw.concat(fullDb.slice(40, 60));
+        if(activeBlocks.includes(4)) raw = raw.concat(fullDb.slice(60, 80));
+        if(activeBlocks.includes(5)) raw = raw.concat(fullDb.slice(80, 100));
+        if(activeBlocks.includes(6)) raw = raw.concat(fullDb.slice(100, 120));
+        if(activeBlocks.includes(7)) raw = raw.concat(fullDb.slice(120, 138));
+    }
+
+    currentQuizSet = JSON.parse(JSON.stringify(raw));
+    
+    if(modeQ === 'random') currentQuizSet.sort(() => Math.random() - 0.5);
+    else currentQuizSet.sort((a,b) => a.id - b.id);
+
+    if(modeA === 'random') {
+        currentQuizSet.forEach(q => {
+            let optsIdx = q.options.map((o, idx) => ({ t: o, orig: idx }));
+            optsIdx.sort(() => Math.random() - 0.5);
+            q.options = optsIdx.map(o => o.t);
+            q.correct = optsIdx.findIndex(o => o.orig === q.correct);
+        });
+    }
+    
+    updateGrade();
+    renderQuestions();
+}
+
+function renderQuestions() {
+    const container = document.getElementById('quiz-container');
+    container.innerHTML = '';
+    
+    if(currentQuizSet.length === 0) {
+        container.innerHTML = '<p style="text-align:center">Nessuna domanda trovata.</p>';
+        document.getElementById('total-visible').innerText = 0;
         return;
     }
-    reviewErrorsMode = !reviewErrorsMode;
-    
-    const btn = document.getElementById('btn-review-mode');
-    if (reviewErrorsMode) {
-        btn.innerHTML = "🔙 Torna al Quiz";
-        btn.classList.add('active-review');
-    } else {
-        btn.innerHTML = "❌ Ripeti Errori";
-        btn.classList.remove('active-review');
-    }
-    
-    // Aggiorna anche lo stato visuale degli altri bottoni
-    updateUIButtons();
-    regenerateQuiz();
+
+    document.getElementById('total-visible').innerText = currentQuizSet.length;
+    updateGrade(); 
+
+    currentQuizSet.forEach(q => {
+        const block = document.createElement('div');
+        block.className = 'question-block';
+        block.id = 'q-' + q.id; 
+        
+        block.innerHTML = `<div class="question-header"><span class="q-badge">#${q.id}</span> <span>${q.q}</span></div>`;
+        const optsDiv = document.createElement('div');
+        optsDiv.className = 'options';
+        q.options.forEach((txt, i) => {
+            const label = document.createElement('div');
+            label.className = 'option-label';
+            label.innerText = txt;
+            label.onclick = () => handleAnswer(q.id, i, q.correct, label, optsDiv);
+            optsDiv.appendChild(label);
+        });
+        block.appendChild(optsDiv);
+        container.appendChild(block);
+    });
 }
 
-function updateUIButtons() {
-    // Gestisce lo stato "active" dei bottoni blocchi
-    document.querySelectorAll('.btn-block').forEach(btn => {
-        if (reviewErrorsMode) {
-            btn.classList.remove('active');
-            btn.style.opacity = '0.5'; // Li rende semitrasparenti in modalità review
-        } else {
-            btn.style.opacity = '1';
-            const blk = parseInt(btn.getAttribute('data-block'));
-            if (!isNaN(blk)) {
-                if (activeBlocks.includes(blk) && !useCustomRange) btn.classList.add('active');
-                else btn.classList.remove('active');
-            } else if (btn.innerHTML === "Tutte") {
-                 // Logica per bottone "Tutte" (semplific
+function handleAnswer(qId, sel, corr, el, cont) {
+    if(el.classList.contains('disabled') || el.classList.contains('wrong')) return;
+    
+    const isFirstAttempt = !attempted.has(qId);
+    attempted.add(qId);
+    
+    if(sel === corr) {
+        el.classList.add('correct');
+        Array.from(cont.children).forEach(c => c.classList.add('disabled'));
+        
+        if(isFirstAttempt) { 
+            score++; 
+            correctFirstTry.add(qId); 
+            document.getElementById('score').innerText = score;
+            updateGrade();
+        }
+    } else { 
+        el.classList.add('wrong'); 
+        
+        if(!questionsWithErrors.has(qId)) {
+            errors++;
+            questionsWithErrors.add(qId);
+            document.getElementById('errors').innerText = errors;
+            addToErrorList(qId);
+        }
+    }
+}
+
+function updateGrade() {
+    const total = currentQuizSet.length;
+    if(total === 0) {
+        document.getElementById('grade').innerText = "0.0";
+        return;
+    }
+    const grade = (score / total) * 30;
+    document.getElementById('grade').innerText = grade.toFixed(1);
+}
+
+function addToErrorList(qId) {
+    const list = document.getElementById('error-list');
+    const link = document.createElement('a');
+    link.href = '#q-' + qId;
+    link.className = 'error-link';
+    link.innerText = '#' + qId;
+    list.appendChild(link);
+    
+    const panel = document.getElementById('error-panel');
+    if(panel.style.display === 'none') panel.style.display = 'block';
+}
+
+function toggleErrorPanel() {
+    const panel = document.getElementById('error-panel');
+    panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+}
+
+function resetProgress() {
+    if(confirm("Azzerare tutto?")) {
+        score = 0; 
+        errors = 0; 
+        attempted.clear(); 
+        correctFirstTry.clear();
+        questionsWithErrors.clear(); 
+        
+        document.getElementById('score').innerText = 0;
+        document.getElementById('errors').innerText = 0;
+        document.getElementById('error-list').innerHTML = '';
+        document.getElementById('error-panel').style.display = 'none';
+        
+        updateGrade();
+        regenerateQuiz();
+        window.scrollTo(0, 0);
+    }
+}
+
+loadAndInit();
+</script>
+</body>
+</html>
