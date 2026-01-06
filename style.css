@@ -244,7 +244,7 @@ button {
     transition: opacity 0.3s;
 }
 
-/* NUOVO: Badge contatore errori */
+/* Badge contatore errori */
 .count-badge {
     background-color: var(--error-color);
     color: #fff;
@@ -257,6 +257,28 @@ button {
     align-items: center;
     box-shadow: 0 2px 4px rgba(250, 62, 62, 0.3);
 }
+
+/* --- LOGICA VISIBILITÀ (SPOILER PROTECTION) --- 
+   Questa classe contiene pulsante e badge.
+   Di default è nascosta (display: none).
+   Diventa flex SOLO quando .question-block ha la classe .answered
+*/
+.post-answer-reveal {
+    display: none; 
+    align-items: center;
+    gap: 10px;
+}
+
+.question-block.answered .post-answer-reveal {
+    display: flex;
+    animation: fadeInInfo 0.5s forwards;
+}
+
+@keyframes fadeInInfo {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
 
 /* --- LOGICA NASCONDI / RIVELA ID --- */
 body.hide-numbers .q-badge { display: none !important; }
