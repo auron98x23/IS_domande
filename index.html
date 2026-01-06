@@ -6,7 +6,9 @@
     <title>AI Quiz Master</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="reveal-mode"> <div class="container">
+<body class="reveal-mode"> 
+
+<div class="container">
     
     <div class="header-top">
         <h1>AI Quiz Master</h1>
@@ -112,7 +114,7 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove, increment, deleteField } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     // --- CONFIGURAZIONE FIREBASE ---
     const firebaseConfig = {
@@ -140,6 +142,7 @@
     
     let currentUser = null;
     let cloudErrorIds = new Set(); 
+    let cloudErrorCounts = {}; // Mappa per contare gli errori { "1": 5, "2": 1 }
     let isCloudMode = false;        
 
     let modeQ = 'ordered'; 
@@ -174,7 +177,6 @@
         }
     }
     initTheme();
-
 
     // --- FUNZIONI UI / VISIBILITA ID ---
     window.toggleIds = function(checkbox) {
@@ -245,6 +247,7 @@
             userInfo.style.display = 'none';
             btnCloud.style.display = 'none';
             cloudErrorIds.clear();
+            cloudErrorCounts = {};
         }
     });
 
@@ -257,8 +260,9 @@
             if (docSnap.exists()) {
                 const data = docSnap.data();
                 if (data.errorIds) cloudErrorIds = new Set(data.errorIds);
+                if (data.errorCounts) cloudErrorCounts = data.errorCounts;
             } else {
-                await setDoc(userRef, { errorIds: [] });
+                await setDoc(userRef, { errorIds: [], errorCounts: {} });
             }
             updateCloudButtonUI();
         } catch (e) { console.error(e); }
@@ -266,20 +270,48 @@
 
     async function addErrorToCloud(qId) {
         if (!currentUser) return;
+        
+        // Aggiorna stato locale
         cloudErrorIds.add(qId);
+        
+        // Aggiorna contatore locale
+        const currentCount = (cloudErrorCounts[qId] || 0) + 1;
+        cloudErrorCounts[qId] = currentCount;
+        
         updateCloudButtonUI();
         
+        // Aggiorna badge UI se la domanda è visibile
         const header = document.querySelector(`#q-${qId} .question-header`);
-        if(header && !header.querySelector('.btn-remove-cloud')) {
-            const btn = document.createElement('button');
-            btn.className = 'btn-remove-cloud';
-            btn.innerText = '✅ Rimuovi dal Cloud';
-            btn.onclick = () => window.manualRemove(qId);
-            header.appendChild(btn);
+        if(header) {
+            // Se c'è già un badge, aggiornalo, altrimenti crealo
+            let countBadge = header.querySelector('.count-badge');
+            if(!countBadge) {
+                // Inseriamo il badge vicino all'ID o al testo
+                const badgeContainer = document.createElement('span');
+                badgeContainer.className = 'count-badge';
+                badgeContainer.style.marginLeft = '8px';
+                // Inseriscilo dopo il testo della domanda
+                header.children[0].appendChild(badgeContainer);
+                countBadge = badgeContainer;
+            }
+            countBadge.innerText = `❌ ${currentCount}`;
+
+            // Aggiungi bottone rimozione se non c'è
+            if(!header.querySelector('.btn-remove-cloud')) {
+                const btn = document.createElement('button');
+                btn.className = 'btn-remove-cloud';
+                btn.innerText = '✅ Rimuovi';
+                btn.onclick = () => window.manualRemove(qId);
+                header.appendChild(btn);
+            }
         }
 
         const userRef = doc(db, "users", currentUser.uid);
-        await updateDoc(userRef, { errorIds: arrayUnion(qId) });
+        // Usa "increment" per sicurezza su aggiornamenti concorrenti
+        await updateDoc(userRef, { 
+            errorIds: arrayUnion(qId),
+            [`errorCounts.${qId}`]: increment(1)
+        });
     }
 
     window.manualRemove = async function(qId) {
@@ -298,10 +330,15 @@
         }
 
         cloudErrorIds.delete(qId);
+        delete cloudErrorCounts[qId]; // Rimuovi conteggio locale
         updateCloudButtonUI();
 
         const userRef = doc(db, "users", currentUser.uid);
-        await updateDoc(userRef, { errorIds: arrayRemove(qId) });
+        // Rimuoviamo ID dall'array E cancelliamo il campo del contatore
+        await updateDoc(userRef, { 
+            errorIds: arrayRemove(qId),
+            [`errorCounts.${qId}`]: deleteField() 
+        });
     };
 
     function updateCloudButtonUI() {
@@ -477,14 +514,27 @@
             block.className = 'question-block';
             block.id = 'q-' + q.id;
             
+            // Logica bottoni header e badge contatore
             let removeBtn = '';
+            let countBadgeHTML = '';
+
             if (cloudErrorIds.has(q.id)) {
                 removeBtn = `<button class="btn-remove-cloud" onclick="window.manualRemove(${q.id})">✅ Rimuovi</button>`;
+                
+                // Controlla il contatore
+                const count = cloudErrorCounts[q.id] || 0;
+                if(count > 0) {
+                    countBadgeHTML = `<span class="count-badge" style="margin-left:8px;">❌ ${count}</span>`;
+                }
             }
 
             block.innerHTML = `
                 <div class="question-header">
-                    <div><span class="q-badge">#${q.id}</span> <span>${q.q}</span></div>
+                    <div class="header-left">
+                        <span class="q-badge">#${q.id}</span>
+                        <span>${q.q}</span>
+                        ${countBadgeHTML}
+                    </div>
                     ${removeBtn}
                 </div>`;
                 
@@ -507,7 +557,7 @@
         const isFirstAttempt = !attempted.has(qId);
         attempted.add(qId);
 
-        // AGGIUNTO: Marca il blocco come "risposto" per gestire la visualizzazione dell'ID
+        // Marca come risposto (per rivelare ID se necessario)
         document.getElementById('q-' + qId).classList.add('answered');
 
         if(sel === corr) {
