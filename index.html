@@ -64,6 +64,9 @@
         .question-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; font-weight: bold; margin-bottom: 10px; color: #2c3e50; }
         .q-badge { background: #333; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 0.8em; margin-right: 5px; }
         
+        /* NUOVA REGOLA: NASCONDE ID SE ATTIVO */
+        body.hide-numbers .q-badge { display: none !important; }
+
         .options { display: flex; flex-direction: column; gap: 5px; }
         .option-label { padding: 10px; background: #f9f9f9; border: 1px solid #eee; border-radius: 4px; cursor: pointer; transition: 0.2s; }
         .option-label:hover:not(.disabled) { background: #f0f0f0; border-color: #ccc; }
@@ -133,7 +136,7 @@
             </div>
             
             <div class="custom-range-wrapper">
-                <span class="group-label">Range / ID Specifici</span>
+                <span class="group-label">Range / ID / Opzioni</span>
                 <div class="custom-range-row">
                     <input type="number" id="start-range" class="login-input" placeholder="Da" style="width:50px">
                     <input type="number" id="end-range" class="login-input" placeholder="A" style="width:50px">
@@ -141,8 +144,13 @@
                     
                     <span style="margin:0 5px; color:#ccc;">|</span>
 
-                    <input type="text" id="specific-ids" class="login-input" placeholder="Es: 2,4,10" style="width:80px; text-align:left;">
+                    <input type="text" id="specific-ids" class="login-input" placeholder="Es: 2,4" style="width:70px; text-align:left;">
                     <button class="btn-block btn-apply" onclick="window.applySpecificIds()">ID</button>
+                </div>
+                
+                <div style="margin-top:10px; display:flex; align-items:center; gap:5px; border-top:1px solid #eee; padding-top:5px;">
+                    <input type="checkbox" id="chk-ids" checked onchange="window.toggleIds(this)" style="width:16px; height:16px;">
+                    <label for="chk-ids" style="font-size:0.9em; cursor:pointer; user-select:none;">Mostra numeri domande (#123)</label>
                 </div>
             </div>
         </div>
@@ -219,6 +227,15 @@
     const userDisplaySpan = document.getElementById('user-display-name');
     const btnCloud = document.getElementById('btn-cloud-history');
 
+    // --- FUNZIONE TOGGLE ID ---
+    window.toggleIds = function(checkbox) {
+        if(checkbox.checked) {
+            document.body.classList.remove('hide-numbers');
+        } else {
+            document.body.classList.add('hide-numbers');
+        }
+    };
+
     // --- AUTH LOGIC ---
     function makeEmail(username) {
         return username.trim() + FAKE_DOMAIN;
@@ -264,7 +281,6 @@
         signOut(auth).then(() => window.location.reload());
     });
 
-    // Gestione stato Auth
     onAuthStateChanged(auth, async (user) => {
         if (user) {
             currentUser = user;
@@ -275,7 +291,7 @@
             await loadCloudErrors();
         } else {
             currentUser = null;
-            loginForm.style.display = 'flex'; // Assicuriamoci che torni visibile
+            loginForm.style.display = 'flex'; 
             userInfo.style.display = 'none';
             btnCloud.style.display = 'none';
             cloudErrorIds.clear();
@@ -306,7 +322,6 @@
         cloudErrorIds.add(qId);
         updateCloudButtonUI();
         
-        // Aggiungi pulsante di rimozione dinamico se siamo in modalità normale
         const header = document.querySelector(`#q-${qId} .question-header`);
         if(header && !header.querySelector('.btn-manual-remove')) {
             const btn = document.createElement('button');
@@ -320,23 +335,19 @@
         await updateDoc(userRef, { errorIds: arrayUnion(qId) });
     }
 
-    // MODIFICA PRINCIPALE: Rimozione visiva immediata (Sparizione)
     window.manualRemove = async function(qId) {
         if (!currentUser) return;
         if (confirm("Rimuovere questa domanda dagli errori salvati?")) {
-            // 1. Aggiorna stato locale
             cloudErrorIds.delete(qId);
             updateCloudButtonUI();
             
-            // 2. SPARIZIONE VISIVA: Rimuove l'intero blocco domanda dal DOM
             const questionBlock = document.getElementById('q-' + qId);
             if(questionBlock) {
                 questionBlock.style.transition = "opacity 0.5s";
                 questionBlock.style.opacity = "0";
-                setTimeout(() => questionBlock.remove(), 500); // Rimuove dopo l'animazione
+                setTimeout(() => questionBlock.remove(), 500); 
             }
 
-            // 3. Aggiorna DB
             const userRef = doc(db, "users", currentUser.uid);
             await updateDoc(userRef, { errorIds: arrayRemove(qId) });
         }
@@ -514,7 +525,6 @@
             block.id = 'q-' + q.id;
             
             let removeBtn = '';
-            // Se è nel cloud, mostra il pulsante
             if (cloudErrorIds.has(q.id)) {
                 removeBtn = `<button class="btn-manual-remove" onclick="window.manualRemove(${q.id})">✅ Rimuovi dal Cloud</button>`;
             }
