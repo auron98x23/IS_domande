@@ -227,6 +227,13 @@ button {
     color: var(--text-main);
 }
 
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
 .q-badge {
     background-color: var(--text-main);
     color: var(--bg-card);
@@ -234,16 +241,26 @@ button {
     border-radius: 4px;
     font-size: 0.8rem;
     vertical-align: middle;
-    margin-right: 5px;
     transition: opacity 0.3s;
 }
 
-/* --- LOGICA NASCONDI / RIVELA ID --- */
+/* NUOVO: Badge contatore errori */
+.count-badge {
+    background-color: var(--error-color);
+    color: #fff;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(250, 62, 62, 0.3);
+}
 
-/* 1. Se "hide-numbers" è attivo sul body, nascondi badge */
+/* --- LOGICA NASCONDI / RIVELA ID --- */
 body.hide-numbers .q-badge { display: none !important; }
 
-/* 2. MA, se "reveal-mode" è attivo E la domanda ha classe "answered", mostra badge con animazione */
 body.hide-numbers.reveal-mode .question-block.answered .q-badge { 
     display: inline-block !important; 
     animation: fadeInBadge 0.5s forwards;
@@ -261,6 +278,8 @@ body.hide-numbers.reveal-mode .question-block.answered .q-badge {
     font-size: 0.75rem;
     border-radius: 20px;
     white-space: nowrap;
+    border: none;
+    cursor: pointer;
 }
 .btn-remove-cloud:hover { background-color: #369b22; }
 
@@ -288,7 +307,6 @@ body.hide-numbers.reveal-mode .question-block.answered .q-badge {
     color: var(--success-color);
     font-weight: bold;
 }
-/* Override per Amoled Mode */
 body.amoled-mode .option-label.correct { color: #69f0ae; }
 
 .option-label.wrong {
@@ -296,7 +314,6 @@ body.amoled-mode .option-label.correct { color: #69f0ae; }
     border-color: var(--error-color) !important;
     color: var(--error-color);
 }
-/* Override per Amoled Mode */
 body.amoled-mode .option-label.wrong { color: #ff8a80; }
 
 .disabled { pointer-events: none; opacity: 0.6; }
