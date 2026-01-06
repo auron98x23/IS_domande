@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>AI Quiz Master</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Piccola aggiunta CSS interna per il nuovo input più largo */
+        .input-wide {
+            width: 100% !important; 
+            flex: 2 !important;
+            text-align: left !important;
+        }
+    </style>
 </head>
 <body>
 
@@ -44,6 +52,14 @@
                     <button class="btn-block btn-apply" onclick="applyCustomRange()">Applica</button>
                 </div>
             </div>
+
+            <div class="custom-range-wrapper">
+                <span class="group-label">Oppure Domande Specifiche (es: 2, 4, 130)</span>
+                <div class="custom-range-row">
+                    <input type="text" id="specific-ids" class="input-wide" placeholder="Es: 2, 4, 130">
+                    <button class="btn-block btn-apply" onclick="applySpecificIds()">Vai</button>
+                </div>
+            </div>
         </div>
 
         <div class="btn-row modes-row">
@@ -78,9 +94,13 @@ let modeQ = 'ordered';
 let modeA = 'ordered'; 
 let currentQuizSet = [];
 
+// Stati per i filtri
 let useCustomRange = false;
 let customStart = 1;
 let customEnd = 138;
+
+let useSpecificSelection = false;
+let specificIds = [];
 
 // Gestione pulsante Torna Su
 const topBtn = document.getElementById("btn-back-to-top");
@@ -116,6 +136,8 @@ async function loadAndInit() {
     }
 }
 
+// --- LOGICA FILTRI ---
+
 function applyCustomRange() {
     const sVal = parseInt(document.getElementById('start-range').value);
     const eVal = parseInt(document.getElementById('end-range').value);
@@ -126,16 +148,45 @@ function applyCustomRange() {
     }
 
     useCustomRange = true;
+    useSpecificSelection = false; // Disattiva selezione specifica
     customStart = sVal;
     customEnd = eVal;
+    
+    // Reset visuale bottoni blocchi
     document.querySelectorAll('.btn-block').forEach(b => {
         if(!b.classList.contains('btn-apply')) b.classList.remove('active');
     });
     regenerateQuiz();
 }
 
+function applySpecificIds() {
+    const inputVal = document.getElementById('specific-ids').value;
+    // Separa per virgola o spazio e converte in numeri
+    const ids = inputVal.split(/[\s,]+/)
+                        .map(item => parseInt(item.trim()))
+                        .filter(num => !isNaN(num) && num > 0);
+
+    if (ids.length === 0) {
+        alert("Inserisci almeno un numero valido (es: 2, 4, 130).");
+        return;
+    }
+
+    useSpecificSelection = true;
+    specificIds = ids;
+    useCustomRange = false; // Disattiva range
+
+    // Reset visuale bottoni blocchi
+    document.querySelectorAll('.btn-block').forEach(b => {
+        if(!b.classList.contains('btn-apply')) b.classList.remove('active');
+    });
+
+    regenerateQuiz();
+}
+
 function toggleBlock(b) {
     useCustomRange = false; 
+    useSpecificSelection = false; // Disattiva selezione specifica
+
     const btn = document.querySelector(`button[data-block="${b}"]`);
     if(activeBlocks.includes(b)) {
         if(activeBlocks.length > 1) {
@@ -151,6 +202,7 @@ function toggleBlock(b) {
 
 function selectAllBlocks() {
     useCustomRange = false;
+    useSpecificSelection = false; // Disattiva selezione specifica
     activeBlocks = [1,2,3,4,5,6,7];
     document.querySelectorAll('.btn-block').forEach(b => {
         if(!b.classList.contains('btn-apply')) b.classList.add('active');
@@ -180,9 +232,18 @@ function regenerateQuiz() {
     document.getElementById('error-panel').style.display = 'none';
 
     let raw = [];
-    if (useCustomRange) {
+
+    // Priorità 1: Selezione Specifica
+    if (useSpecificSelection) {
+        // Filtra solo gli ID presenti nell'array specificIds
+        raw = fullDb.filter(q => specificIds.includes(q.id));
+    } 
+    // Priorità 2: Range Manuale
+    else if (useCustomRange) {
         raw = fullDb.filter(q => q.id >= customStart && q.id <= customEnd);
-    } else {
+    } 
+    // Priorità 3: Blocchi predefiniti
+    else {
         if(activeBlocks.includes(1)) raw = raw.concat(fullDb.slice(0, 20));
         if(activeBlocks.includes(2)) raw = raw.concat(fullDb.slice(20, 40));
         if(activeBlocks.includes(3)) raw = raw.concat(fullDb.slice(40, 60));
@@ -197,7 +258,12 @@ function regenerateQuiz() {
     
     // Ordinamento domande
     if(modeQ === 'random') currentQuizSet.sort(() => Math.random() - 0.5);
-    else currentQuizSet.sort((a,b) => a.id - b.id);
+    else {
+        // Se siamo in modalità specifica, manteniamo l'ordine inserito?
+        // Generalmente è meglio ordinare per ID anche qui, o seguire l'ordine dell'utente
+        // Per semplicità e coerenza con il tasto "Domande Ordine", ordiniamo per ID:
+        currentQuizSet.sort((a,b) => a.id - b.id);
+    }
 
     // Ordinamento risposte
     if(modeA === 'random') {
@@ -215,10 +281,10 @@ function regenerateQuiz() {
 
 function renderQuestions() {
     const container = document.getElementById('quiz-container');
-    container.innerHTML = ''; // Pulisce il contenitore rimuovendo vecchie domande e classi
+    container.innerHTML = ''; 
     
     if(currentQuizSet.length === 0) {
-        container.innerHTML = '<p style="text-align:center">Nessuna domanda trovata.</p>';
+        container.innerHTML = '<p style="text-align:center">Nessuna domanda trovata con questi criteri.</p>';
         document.getElementById('total-visible').innerText = 0;
         return;
     }
@@ -302,21 +368,17 @@ function toggleErrorPanel() {
     panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
 }
 
-// Funzione RESET aggiornata e corretta
 function resetProgress() {
-    // 1. Chiede conferma
     if (!confirm("Sei sicuro di voler azzerare punteggio e risposte?")) {
         return;
     }
 
-    // 2. Azzera le variabili logiche
     score = 0;
     errors = 0;
     attempted.clear();
     correctFirstTry.clear();
     questionsWithErrors.clear();
 
-    // 3. Azzera immediatamente l'interfaccia
     document.getElementById('score').innerText = '0';
     document.getElementById('errors').innerText = '0';
     document.getElementById('grade').innerText = '0.0';
@@ -327,13 +389,10 @@ function resetProgress() {
     const errorPanel = document.getElementById('error-panel');
     if(errorPanel) errorPanel.style.display = 'none';
 
-    // 4. Scroll in alto per feedback visivo
     window.scrollTo({top: 0, behavior: 'auto'});
 
-    // 5. Rigenera il quiz con un piccolo ritardo per permettere il rendering
     setTimeout(() => {
         regenerateQuiz();
-        // Forza l'aggiornamento del voto dopo la rigenerazione
         updateGrade();
     }, 50);
 }
