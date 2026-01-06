@@ -5,14 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>AI Quiz Master</title>
     <link rel="stylesheet" href="style.css">
-    <style>
-        /* Piccola aggiunta CSS interna per il nuovo input più largo */
-        .input-wide {
-            width: 100% !important; 
-            flex: 2 !important;
-            text-align: left !important;
-        }
-    </style>
 </head>
 <body>
 
@@ -20,384 +12,490 @@
     <div class="header-wrapper">
         <h1>AI Quiz Master (1-138)</h1>
         
+        <div id="auth-container" style="background:#f0f0f0; padding:10px; border-radius:8px; margin-bottom:10px;">
+            <div id="login-form" style="display:flex; gap:5px; flex-wrap:wrap; justify-content:center;">
+                <input type="email" id="email-input" placeholder="Email" style="padding:8px; border-radius:4px; border:1px solid #ccc; flex:1;">
+                <input type="password" id="password-input" placeholder="Password" style="padding:8px; border-radius:4px; border:1px solid #ccc; flex:1;">
+                <button id="btn-login" class="btn-block" style="background:#2ecc71; color:white; border:none; width:auto;">Accedi</button>
+                <button id="btn-register" class="btn-block" style="background:#3498db; color:white; border:none; width:auto;">Registrati</button>
+            </div>
+
+            <div id="user-info" style="display:none; justify-content:space-between; align-items:center;">
+                <span style="font-size:0.9em;">Ciao, <b id="user-email"></b></span>
+                <button id="btn-logout" class="btn-block" style="background:#e74c3c; color:white; border:none; width:auto; padding:5px 10px; font-size:0.8em;">Esci</button>
+            </div>
+        </div>
+
         <div class="score-box">
             <div class="score-item">✅ Punti: <span id="score">0</span> / <span id="total-visible">0</span></div>
-            <div class="score-item error-text">❌ Errori: <span id="errors">0</span></div>
+            <div class="score-item error-text">❌ Errori Sessione: <span id="errors">0</span></div>
             <div class="score-item grade-text">🎓 Voto: <span id="grade">0.0</span>/30</div>
         </div>
 
+        <div style="margin-bottom: 15px;">
+            <button id="btn-cloud-history" class="btn-block" style="background:#8e44ad; color:white; width:100%; display:none;" onclick="window.startCloudReview()">
+                ☁️ Carica i miei Errori dal Cloud (0)
+            </button>
+        </div>
+
         <div id="error-panel" class="error-panel" style="display: none;">
-            <span class="error-label">Domande Errate (Clicca per andare):</span>
+            <span class="error-label">Domande Errate Sessione Corrente:</span>
             <div id="error-list" class="error-list"></div>
         </div>
 
         <div class="control-group">
-            <span class="group-label">Blocchi Domande</span>
+            <span class="group-label">Filtri Domande</span>
             <div class="btn-row">
-                <button class="btn-block active" onclick="toggleBlock(1)" data-block="1">1-20</button>
-                <button class="btn-block" onclick="toggleBlock(2)" data-block="2">21-40</button>
-                <button class="btn-block" onclick="toggleBlock(3)" data-block="3">41-60</button>
-                <button class="btn-block" onclick="toggleBlock(4)" data-block="4">61-80</button>
-                <button class="btn-block" onclick="toggleBlock(5)" data-block="5">81-100</button>
-                <button class="btn-block" onclick="toggleBlock(6)" data-block="6">101-120</button>
-                <button class="btn-block" onclick="toggleBlock(7)" data-block="7">121-138</button>
-                <button class="btn-block" onclick="selectAllBlocks()" style="border-color: #333; color: #333;">Tutte</button>
+                <button class="btn-block active" onclick="window.toggleBlock(1)" data-block="1">1-20</button>
+                <button class="btn-block" onclick="window.toggleBlock(2)" data-block="2">21-40</button>
+                <button class="btn-block" onclick="window.toggleBlock(3)" data-block="3">41-60</button>
+                <button class="btn-block" onclick="window.toggleBlock(4)" data-block="4">61-80</button>
+                <button class="btn-block" onclick="window.toggleBlock(5)" data-block="5">81-100</button>
+                <button class="btn-block" onclick="window.toggleBlock(6)" data-block="6">101-120</button>
+                <button class="btn-block" onclick="window.toggleBlock(7)" data-block="7">121-138</button>
+                <button class="btn-block" onclick="window.selectAllBlocks()" style="border-color: #333; color: #333;">Tutte</button>
             </div>
             
             <div class="custom-range-wrapper">
-                <span class="group-label">Oppure Range Manuale</span>
+                <span class="group-label">Range / ID</span>
                 <div class="custom-range-row">
-                    <input type="number" id="start-range" placeholder="Da" min="1">
-                    <input type="number" id="end-range" placeholder="A" min="1">
-                    <button class="btn-block btn-apply" onclick="applyCustomRange()">Applica</button>
-                </div>
-            </div>
-
-            <div class="custom-range-wrapper">
-                <span class="group-label">Oppure Domande Specifiche (es: 2, 4, 130)</span>
-                <div class="custom-range-row">
-                    <input type="text" id="specific-ids" class="input-wide" placeholder="Es: 2, 4, 130">
-                    <button class="btn-block btn-apply" onclick="applySpecificIds()">Vai</button>
+                    <input type="number" id="start-range" placeholder="Da" style="width:50px">
+                    <input type="number" id="end-range" placeholder="A" style="width:50px">
+                    <button class="btn-block btn-apply" onclick="window.applyCustomRange()">Range</button>
+                    
+                    <input type="text" id="specific-ids" placeholder="Es: 2,4" style="width:80px; text-align:left;">
+                    <button class="btn-block btn-apply" onclick="window.applySpecificIds()">ID</button>
                 </div>
             </div>
         </div>
 
         <div class="btn-row modes-row">
-            <button class="btn-q" id="q-rand" onclick="setQMode('random')">🔀 Domande Random</button>
-            <button class="btn-q mode-active" id="q-ord" onclick="setQMode('ordered')">🔢 Domande Ordine</button>
-            <button class="btn-a" id="a-rand" onclick="setAMode('random')">🔀 Risposte Random</button>
-            <button class="btn-a mode-active" id="a-ord" onclick="setAMode('ordered')">ABC Risposte Ordine</button>
+            <button class="btn-q" id="q-rand" onclick="window.setQMode('random')">🔀 D. Random</button>
+            <button class="btn-q mode-active" id="q-ord" onclick="window.setQMode('ordered')">🔢 D. Ordine</button>
+            <button class="btn-a" id="a-rand" onclick="window.setAMode('random')">🔀 R. Random</button>
+            <button class="btn-a mode-active" id="a-ord" onclick="window.setAMode('ordered')">ABC R. Ordine</button>
         </div>
         
         <div class="btn-row">
-            <button class="btn-reset" onclick="resetProgress()">🗑️ Reset Tutto</button>
-            <button class="btn-error-toggle" onclick="toggleErrorPanel()">⚠️ Vedi Errori</button>
+            <button class="btn-reset" onclick="window.resetProgress()">🗑️ Reset Sessione</button>
+            <button class="btn-error-toggle" onclick="window.toggleErrorPanel()">⚠️ Vedi Err.</button>
         </div>
     </div>
 
     <div id="quiz-container">
-        <p style="text-align: center; color: #666; padding: 20px;">Caricamento domande...</p>
+        <p style="text-align: center; color: #666; padding: 20px;">Caricamento...</p>
     </div>
 </div>
 
-<button onclick="scrollToTop()" id="btn-back-to-top" class="btn-top" title="Torna su">⬆️</button>
+<button onclick="window.scrollToTop()" id="btn-back-to-top" class="btn-top" title="Torna su">⬆️</button>
 
-<script>
-let fullDb = [];
-let activeBlocks = [1];
-let score = 0;
-let errors = 0; 
-let attempted = new Set();
-let correctFirstTry = new Set();
-let questionsWithErrors = new Set();
-let modeQ = 'ordered'; 
-let modeA = 'ordered'; 
-let currentQuizSet = [];
+<script type="module">
+    // Importiamo le funzioni necessarie
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-// Stati per i filtri
-let useCustomRange = false;
-let customStart = 1;
-let customEnd = 138;
+    // --- LA TUA CONFIGURAZIONE FIREBASE ---
+    const firebaseConfig = {
+        apiKey: "AIzaSyA7tsfHv64JlJRB7rrWHgmT786f-jwcU-c",
+        authDomain: "testdomande-e5950.firebaseapp.com",
+        projectId: "testdomande-e5950",
+        storageBucket: "testdomande-e5950.firebasestorage.app",
+        messagingSenderId: "66125293330",
+        appId: "1:66125293330:web:cb1133f852ba4fa5f575cb"
+    };
 
-let useSpecificSelection = false;
-let specificIds = [];
+    // Inizializza Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-// Gestione pulsante Torna Su
-const topBtn = document.getElementById("btn-back-to-top");
+    // Variabili Globali Quiz
+    let fullDb = [];
+    let activeBlocks = [1];
+    let score = 0;
+    let errors = 0; 
+    let attempted = new Set();
+    let questionsWithErrors = new Set();
+    
+    // Variabili Cloud
+    let currentUser = null;
+    let cloudErrorIds = new Set(); 
+    let isCloudMode = false;       
 
-window.onscroll = function() {
-    scrollFunction();
-};
+    let modeQ = 'ordered'; 
+    let modeA = 'ordered'; 
+    let currentQuizSet = [];
+    let useCustomRange = false;
+    let customStart = 1, customEnd = 138;
+    let useSpecificSelection = false;
+    let specificIds = [];
 
-function scrollFunction() {
-    if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
-        topBtn.style.display = "block";
-    } else {
-        topBtn.style.display = "none";
-    }
-}
+    // --- GESTIONE LOGIN EMAIL / PASSWORD ---
+    
+    const emailInput = document.getElementById('email-input');
+    const passInput = document.getElementById('password-input');
+    const btnLogin = document.getElementById('btn-login');
+    const btnRegister = document.getElementById('btn-register');
+    const btnLogout = document.getElementById('btn-logout');
+    
+    const loginForm = document.getElementById('login-form');
+    const userInfo = document.getElementById('user-info');
+    const userEmailSpan = document.getElementById('user-email');
+    const btnCloud = document.getElementById('btn-cloud-history');
 
-function scrollToTop() {
-    window.scrollTo({top: 0, behavior: 'smooth'});
-}
+    // Funzione REGISTRAZIONE
+    btnRegister.addEventListener('click', () => {
+        const email = emailInput.value;
+        const pass = passInput.value;
+        if(pass.length < 6) { alert("La password deve essere di almeno 6 caratteri."); return; }
+        
+        createUserWithEmailAndPassword(auth, email, pass)
+            .then((userCredential) => {
+                alert("Account creato con successo! Ora sei loggato.");
+            })
+            .catch((error) => {
+                let msg = error.message;
+                if(msg.includes('email-already-in-use')) msg = "Email già registrata.";
+                alert("Errore registrazione: " + msg);
+            });
+    });
 
-async function loadAndInit() {
-    try {
-        const response = await fetch('questions.json');
-        if (!response.ok) {
-            throw new Error(`Errore HTTP: ${response.status}`);
+    // Funzione LOGIN
+    btnLogin.addEventListener('click', () => {
+        const email = emailInput.value;
+        const pass = passInput.value;
+        
+        signInWithEmailAndPassword(auth, email, pass)
+            .catch((error) => {
+                let msg = error.message;
+                if(msg.includes('invalid-credential')) msg = "Email o Password errati.";
+                alert("Errore login: " + msg);
+            });
+    });
+
+    // Funzione LOGOUT
+    btnLogout.addEventListener('click', () => {
+        signOut(auth).then(() => {
+            window.location.reload();
+        });
+    });
+
+    // Monitoraggio Stato Utente
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            currentUser = user;
+            // Nascondi form login, mostra info utente
+            loginForm.style.display = 'none';
+            userInfo.style.display = 'flex';
+            userEmailSpan.innerText = user.email;
+            btnCloud.style.display = 'block';
+            
+            await loadCloudErrors();
+        } else {
+            currentUser = null;
+            // Mostra form login, nascondi info
+            loginForm.style.display = 'flex';
+            userInfo.style.display = 'none';
+            btnCloud.style.display = 'none';
+            cloudErrorIds.clear();
         }
-        fullDb = await response.json();
+    });
+
+    // --- FUNZIONI DATABASE CLOUD ---
+
+    async function loadCloudErrors() {
+        if (!currentUser) return;
+        const userRef = doc(db, "users", currentUser.uid);
+        try {
+            const docSnap = await getDoc(userRef);
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                if (data.errorIds && Array.isArray(data.errorIds)) {
+                    cloudErrorIds = new Set(data.errorIds);
+                }
+            } else {
+                await setDoc(userRef, { errorIds: [] });
+            }
+            updateCloudButtonUI();
+        } catch (e) {
+            console.error("Errore lettura DB:", e);
+        }
+    }
+
+    async function addErrorToCloud(qId) {
+        if (!currentUser) return;
+        cloudErrorIds.add(qId);
+        updateCloudButtonUI();
+        const userRef = doc(db, "users", currentUser.uid);
+        await updateDoc(userRef, { errorIds: arrayUnion(qId) });
+    }
+
+    async function removeErrorFromCloud(qId) {
+        if (!currentUser) return;
+        if (cloudErrorIds.has(qId)) {
+            cloudErrorIds.delete(qId);
+            updateCloudButtonUI();
+            const userRef = doc(db, "users", currentUser.uid);
+            await updateDoc(userRef, { errorIds: arrayRemove(qId) });
+        }
+    }
+
+    function updateCloudButtonUI() {
+        btnCloud.innerText = `☁️ Carica i miei Errori dal Cloud (${cloudErrorIds.size})`;
+    }
+
+    window.startCloudReview = function() {
+        if (cloudErrorIds.size === 0) {
+            alert("Non hai errori salvati nel cloud!");
+            return;
+        }
+        isCloudMode = true;
+        useCustomRange = false;
+        useSpecificSelection = false;
+        
+        resetFiltersUI();
+        btnCloud.classList.add('active'); 
         regenerateQuiz();
-    } catch (error) {
-        console.error("Impossibile caricare le domande:", error);
-        document.getElementById('quiz-container').innerHTML = 
-            "<p style='color:red; text-align:center;'>Errore caricamento 'questions.json'.<br>Usa un server locale o GitHub Pages e controlla che il file si chiami esattamente questions.json</p>";
-    }
-}
-
-// --- LOGICA FILTRI ---
-
-function applyCustomRange() {
-    const sVal = parseInt(document.getElementById('start-range').value);
-    const eVal = parseInt(document.getElementById('end-range').value);
-
-    if(!sVal || !eVal || sVal > eVal || sVal < 1) {
-        alert("Inserisci un range valido.");
-        return;
     }
 
-    useCustomRange = true;
-    useSpecificSelection = false; // Disattiva selezione specifica
-    customStart = sVal;
-    customEnd = eVal;
+    // --- FUNZIONI CORE QUIZ ---
+
+    window.scrollToTop = function() { window.scrollTo({top: 0, behavior: 'smooth'}); };
     
-    // Reset visuale bottoni blocchi
-    document.querySelectorAll('.btn-block').forEach(b => {
-        if(!b.classList.contains('btn-apply')) b.classList.remove('active');
-    });
-    regenerateQuiz();
-}
+    window.applyCustomRange = function() {
+        const sVal = parseInt(document.getElementById('start-range').value);
+        const eVal = parseInt(document.getElementById('end-range').value);
+        if(!sVal || !eVal || sVal > eVal) { alert("Range non valido"); return; }
+        useCustomRange = true; isCloudMode = false; useSpecificSelection = false;
+        customStart = sVal; customEnd = eVal;
+        resetFiltersUI();
+        regenerateQuiz();
+    };
 
-function applySpecificIds() {
-    const inputVal = document.getElementById('specific-ids').value;
-    // Separa per virgola o spazio e converte in numeri
-    const ids = inputVal.split(/[\s,]+/)
-                        .map(item => parseInt(item.trim()))
-                        .filter(num => !isNaN(num) && num > 0);
+    window.applySpecificIds = function() {
+        const val = document.getElementById('specific-ids').value;
+        const ids = val.split(/[\s,]+/).map(n => parseInt(n)).filter(n => !isNaN(n));
+        if(ids.length === 0) { alert("Nessun ID valido"); return; }
+        useSpecificSelection = true; isCloudMode = false; useCustomRange = false;
+        specificIds = ids;
+        resetFiltersUI();
+        regenerateQuiz();
+    };
 
-    if (ids.length === 0) {
-        alert("Inserisci almeno un numero valido (es: 2, 4, 130).");
-        return;
-    }
-
-    useSpecificSelection = true;
-    specificIds = ids;
-    useCustomRange = false; // Disattiva range
-
-    // Reset visuale bottoni blocchi
-    document.querySelectorAll('.btn-block').forEach(b => {
-        if(!b.classList.contains('btn-apply')) b.classList.remove('active');
-    });
-
-    regenerateQuiz();
-}
-
-function toggleBlock(b) {
-    useCustomRange = false; 
-    useSpecificSelection = false; // Disattiva selezione specifica
-
-    const btn = document.querySelector(`button[data-block="${b}"]`);
-    if(activeBlocks.includes(b)) {
-        if(activeBlocks.length > 1) {
-            activeBlocks = activeBlocks.filter(x => x !== b);
-            btn.classList.remove('active');
+    window.toggleBlock = function(b) {
+        useCustomRange = false; isCloudMode = false; useSpecificSelection = false;
+        const btn = document.querySelector(`button[data-block="${b}"]`);
+        if(activeBlocks.includes(b)) {
+            if(activeBlocks.length > 1) {
+                activeBlocks = activeBlocks.filter(x => x !== b);
+                btn.classList.remove('active');
+            }
+        } else {
+            activeBlocks.push(b);
+            btn.classList.add('active');
         }
-    } else {
-        activeBlocks.push(b);
-        btn.classList.add('active');
-    }
-    regenerateQuiz();
-}
+        btnCloud.classList.remove('active');
+        regenerateQuiz();
+    };
 
-function selectAllBlocks() {
-    useCustomRange = false;
-    useSpecificSelection = false; // Disattiva selezione specifica
-    activeBlocks = [1,2,3,4,5,6,7];
-    document.querySelectorAll('.btn-block').forEach(b => {
-        if(!b.classList.contains('btn-apply')) b.classList.add('active');
-    });
-    regenerateQuiz();
-}
+    window.selectAllBlocks = function() {
+        useCustomRange = false; isCloudMode = false; useSpecificSelection = false;
+        activeBlocks = [1,2,3,4,5,6,7];
+        resetFiltersUI();
+        document.querySelectorAll('.btn-block[data-block]').forEach(b => b.classList.add('active'));
+        regenerateQuiz();
+    };
 
-function setQMode(m) {
-    modeQ = m;
-    document.getElementById('q-rand').classList.toggle('mode-active', m === 'random');
-    document.getElementById('q-ord').classList.toggle('mode-active', m === 'ordered');
-    regenerateQuiz();
-}
-
-function setAMode(m) {
-    modeA = m;
-    document.getElementById('a-rand').classList.toggle('mode-active', m === 'random');
-    document.getElementById('a-ord').classList.toggle('mode-active', m === 'ordered');
-    regenerateQuiz();
-}
-
-function regenerateQuiz() {
-    if (fullDb.length === 0) return;
-
-    // Reset visuale pannello errori
-    document.getElementById('error-list').innerHTML = '';
-    document.getElementById('error-panel').style.display = 'none';
-
-    let raw = [];
-
-    // Priorità 1: Selezione Specifica
-    if (useSpecificSelection) {
-        // Filtra solo gli ID presenti nell'array specificIds
-        raw = fullDb.filter(q => specificIds.includes(q.id));
-    } 
-    // Priorità 2: Range Manuale
-    else if (useCustomRange) {
-        raw = fullDb.filter(q => q.id >= customStart && q.id <= customEnd);
-    } 
-    // Priorità 3: Blocchi predefiniti
-    else {
-        if(activeBlocks.includes(1)) raw = raw.concat(fullDb.slice(0, 20));
-        if(activeBlocks.includes(2)) raw = raw.concat(fullDb.slice(20, 40));
-        if(activeBlocks.includes(3)) raw = raw.concat(fullDb.slice(40, 60));
-        if(activeBlocks.includes(4)) raw = raw.concat(fullDb.slice(60, 80));
-        if(activeBlocks.includes(5)) raw = raw.concat(fullDb.slice(80, 100));
-        if(activeBlocks.includes(6)) raw = raw.concat(fullDb.slice(100, 120));
-        if(activeBlocks.includes(7)) raw = raw.concat(fullDb.slice(120, 138));
-    }
-
-    // Copia profonda per evitare riferimenti
-    currentQuizSet = JSON.parse(JSON.stringify(raw));
-    
-    // Ordinamento domande
-    if(modeQ === 'random') currentQuizSet.sort(() => Math.random() - 0.5);
-    else {
-        // Se siamo in modalità specifica, manteniamo l'ordine inserito?
-        // Generalmente è meglio ordinare per ID anche qui, o seguire l'ordine dell'utente
-        // Per semplicità e coerenza con il tasto "Domande Ordine", ordiniamo per ID:
-        currentQuizSet.sort((a,b) => a.id - b.id);
-    }
-
-    // Ordinamento risposte
-    if(modeA === 'random') {
-        currentQuizSet.forEach(q => {
-            let optsIdx = q.options.map((o, idx) => ({ t: o, orig: idx }));
-            optsIdx.sort(() => Math.random() - 0.5);
-            q.options = optsIdx.map(o => o.t);
-            q.correct = optsIdx.findIndex(o => o.orig === q.correct);
+    function resetFiltersUI() {
+        document.querySelectorAll('.btn-block').forEach(b => {
+             if(b.dataset.block) b.classList.remove('active');
         });
-    }
-    
-    updateGrade();
-    renderQuestions();
-}
-
-function renderQuestions() {
-    const container = document.getElementById('quiz-container');
-    container.innerHTML = ''; 
-    
-    if(currentQuizSet.length === 0) {
-        container.innerHTML = '<p style="text-align:center">Nessuna domanda trovata con questi criteri.</p>';
-        document.getElementById('total-visible').innerText = 0;
-        return;
+        btnCloud.classList.remove('active');
     }
 
-    document.getElementById('total-visible').innerText = currentQuizSet.length;
-    updateGrade(); 
+    window.setQMode = function(m) {
+        modeQ = m;
+        document.getElementById('q-rand').classList.toggle('mode-active', m === 'random');
+        document.getElementById('q-ord').classList.toggle('mode-active', m === 'ordered');
+        regenerateQuiz();
+    };
 
-    currentQuizSet.forEach(q => {
-        const block = document.createElement('div');
-        block.className = 'question-block';
-        block.id = 'q-' + q.id; 
-        
-        block.innerHTML = `<div class="question-header"><span class="q-badge">#${q.id}</span> <span>${q.q}</span></div>`;
-        const optsDiv = document.createElement('div');
-        optsDiv.className = 'options';
-        q.options.forEach((txt, i) => {
-            const label = document.createElement('div');
-            label.className = 'option-label';
-            label.innerText = txt;
-            label.onclick = () => handleAnswer(q.id, i, q.correct, label, optsDiv);
-            optsDiv.appendChild(label);
-        });
-        block.appendChild(optsDiv);
-        container.appendChild(block);
-    });
-}
+    window.setAMode = function(m) {
+        modeA = m;
+        document.getElementById('a-rand').classList.toggle('mode-active', m === 'random');
+        document.getElementById('a-ord').classList.toggle('mode-active', m === 'ordered');
+        regenerateQuiz();
+    };
 
-function handleAnswer(qId, sel, corr, el, cont) {
-    if(el.classList.contains('disabled') || el.classList.contains('wrong')) return;
-    
-    const isFirstAttempt = !attempted.has(qId);
-    attempted.add(qId);
-    
-    if(sel === corr) {
-        el.classList.add('correct');
-        // Disabilita tutte le opzioni in questo contenitore
-        Array.from(cont.children).forEach(c => c.classList.add('disabled'));
-        
-        if(isFirstAttempt) { 
-            score++; 
-            correctFirstTry.add(qId); 
-            document.getElementById('score').innerText = score;
-            updateGrade();
-        }
-    } else { 
-        el.classList.add('wrong'); 
-        
-        if(!questionsWithErrors.has(qId)) {
-            errors++;
-            questionsWithErrors.add(qId);
-            document.getElementById('errors').innerText = errors;
-            addToErrorList(qId);
-        }
-    }
-}
-
-function updateGrade() {
-    const total = currentQuizSet.length;
-    if(total === 0) {
+    window.resetProgress = function() {
+        if(!confirm("Resettare i punteggi di QUESTA sessione?")) return;
+        score = 0; errors = 0; attempted.clear(); questionsWithErrors.clear();
+        document.getElementById('score').innerText = 0;
+        document.getElementById('errors').innerText = 0;
         document.getElementById('grade').innerText = "0.0";
-        return;
-    }
-    const grade = (score / total) * 30;
-    document.getElementById('grade').innerText = grade.toFixed(1);
-}
-
-function addToErrorList(qId) {
-    const list = document.getElementById('error-list');
-    const link = document.createElement('a');
-    link.href = '#q-' + qId;
-    link.className = 'error-link';
-    link.innerText = '#' + qId;
-    list.appendChild(link);
-    
-    const panel = document.getElementById('error-panel');
-    if(panel.style.display === 'none') panel.style.display = 'block';
-}
-
-function toggleErrorPanel() {
-    const panel = document.getElementById('error-panel');
-    panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
-}
-
-function resetProgress() {
-    if (!confirm("Sei sicuro di voler azzerare punteggio e risposte?")) {
-        return;
-    }
-
-    score = 0;
-    errors = 0;
-    attempted.clear();
-    correctFirstTry.clear();
-    questionsWithErrors.clear();
-
-    document.getElementById('score').innerText = '0';
-    document.getElementById('errors').innerText = '0';
-    document.getElementById('grade').innerText = '0.0';
-    
-    const errorList = document.getElementById('error-list');
-    if(errorList) errorList.innerHTML = '';
-    
-    const errorPanel = document.getElementById('error-panel');
-    if(errorPanel) errorPanel.style.display = 'none';
-
-    window.scrollTo({top: 0, behavior: 'auto'});
-
-    setTimeout(() => {
+        document.getElementById('error-list').innerHTML = '';
+        document.getElementById('error-panel').style.display = 'none';
         regenerateQuiz();
-        updateGrade();
-    }, 50);
-}
+    };
+    
+    window.toggleErrorPanel = function() {
+        const p = document.getElementById('error-panel');
+        p.style.display = p.style.display === 'none' ? 'block' : 'none';
+    };
 
-loadAndInit();
+    async function loadQuestions() {
+        try {
+            const res = await fetch('questions.json');
+            fullDb = await res.json();
+            regenerateQuiz();
+        } catch(e) {
+            document.getElementById('quiz-container').innerHTML = "Errore caricamento questions.json";
+        }
+    }
+
+    function regenerateQuiz() {
+        if(fullDb.length === 0) return;
+        
+        let raw = [];
+        
+        if (isCloudMode) {
+            raw = fullDb.filter(q => cloudErrorIds.has(q.id));
+        } else if (useSpecificSelection) {
+            raw = fullDb.filter(q => specificIds.includes(q.id));
+        } else if (useCustomRange) {
+            raw = fullDb.filter(q => q.id >= customStart && q.id <= customEnd);
+        } else {
+            if(activeBlocks.includes(1)) raw = raw.concat(fullDb.slice(0, 20));
+            if(activeBlocks.includes(2)) raw = raw.concat(fullDb.slice(20, 40));
+            if(activeBlocks.includes(3)) raw = raw.concat(fullDb.slice(40, 60));
+            if(activeBlocks.includes(4)) raw = raw.concat(fullDb.slice(60, 80));
+            if(activeBlocks.includes(5)) raw = raw.concat(fullDb.slice(80, 100));
+            if(activeBlocks.includes(6)) raw = raw.concat(fullDb.slice(100, 120));
+            if(activeBlocks.includes(7)) raw = raw.concat(fullDb.slice(120, 138));
+        }
+
+        currentQuizSet = JSON.parse(JSON.stringify(raw));
+
+        if(modeQ === 'random') currentQuizSet.sort(() => Math.random() - 0.5);
+        else currentQuizSet.sort((a,b) => a.id - b.id);
+
+        if(modeA === 'random') {
+            currentQuizSet.forEach(q => {
+                let optsIdx = q.options.map((o, idx) => ({ t: o, orig: idx }));
+                optsIdx.sort(() => Math.random() - 0.5);
+                q.options = optsIdx.map(o => o.t);
+                q.correct = optsIdx.findIndex(o => o.orig === q.correct);
+            });
+        }
+
+        renderQuestions();
+    }
+
+    function renderQuestions() {
+        const container = document.getElementById('quiz-container');
+        container.innerHTML = '';
+        
+        if(currentQuizSet.length === 0) {
+            container.innerHTML = isCloudMode 
+                ? '<p style="text-align:center; padding:20px;">🎉 Nessun errore salvato nel Cloud! Ottimo lavoro.</p>'
+                : '<p style="text-align:center; padding:20px;">Nessuna domanda trovata.</p>';
+            document.getElementById('total-visible').innerText = 0;
+            return;
+        }
+
+        document.getElementById('total-visible').innerText = currentQuizSet.length;
+        updateGrade();
+
+        currentQuizSet.forEach(q => {
+            const block = document.createElement('div');
+            block.className = 'question-block';
+            block.id = 'q-' + q.id;
+            
+            let cloudBadge = '';
+            if (cloudErrorIds.has(q.id)) {
+                cloudBadge = ' <span style="font-size:0.8em; color:white; background:#e74c3c; padding:2px 6px; border-radius:4px;">☁️ In memoria</span>';
+            }
+
+            block.innerHTML = `<div class="question-header"><span class="q-badge">#${q.id}</span> <span>${q.q}</span> ${cloudBadge}</div>`;
+            const optsDiv = document.createElement('div');
+            optsDiv.className = 'options';
+            q.options.forEach((txt, i) => {
+                const label = document.createElement('div');
+                label.className = 'option-label';
+                label.innerText = txt;
+                label.addEventListener('click', () => handleAnswer(q.id, i, q.correct, label, optsDiv));
+                optsDiv.appendChild(label);
+            });
+            block.appendChild(optsDiv);
+            container.appendChild(block);
+        });
+    }
+
+    function handleAnswer(qId, sel, corr, el, cont) {
+        if(el.classList.contains('disabled') || el.classList.contains('wrong')) return;
+        const isFirstAttempt = !attempted.has(qId);
+        attempted.add(qId);
+
+        if(sel === corr) {
+            el.classList.add('correct');
+            Array.from(cont.children).forEach(c => c.classList.add('disabled'));
+            if(isFirstAttempt) {
+                score++;
+                document.getElementById('score').innerText = score;
+                updateGrade();
+            }
+            if(currentUser && cloudErrorIds.has(qId)) {
+                removeErrorFromCloud(qId);
+                const header = document.querySelector(`#q-${qId} .question-header`);
+                if(header) {
+                     const span = header.querySelector('span[style*="background"]');
+                     if(span) span.style.display = 'none';
+                }
+            }
+        } else {
+            el.classList.add('wrong');
+            if(!questionsWithErrors.has(qId)) {
+                errors++;
+                questionsWithErrors.add(qId);
+                document.getElementById('errors').innerText = errors;
+                
+                const list = document.getElementById('error-list');
+                const link = document.createElement('a');
+                link.href = '#q-' + qId;
+                link.className = 'error-link';
+                link.innerText = '#' + qId;
+                list.appendChild(link);
+                document.getElementById('error-panel').style.display = 'block';
+            }
+            if(currentUser) {
+                addErrorToCloud(qId);
+                const header = document.querySelector(`#q-${qId} .question-header`);
+                if(header && !header.innerHTML.includes('In memoria')) {
+                     header.innerHTML += ' <span style="font-size:0.8em; color:white; background:#e74c3c; padding:2px 6px; border-radius:4px;">☁️ Salvato</span>';
+                }
+            }
+        }
+    }
+
+    function updateGrade() {
+        const total = currentQuizSet.length;
+        if(total === 0) { document.getElementById('grade').innerText = "0.0"; return; }
+        const grade = (score / total) * 30;
+        document.getElementById('grade').innerText = grade.toFixed(1);
+    }
+
+    const topBtn = document.getElementById("btn-back-to-top");
+    window.onscroll = function() {
+        if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+            topBtn.style.display = "block";
+        } else {
+            topBtn.style.display = "none";
+        }
+    };
+
+    loadQuestions();
+
 </script>
 </body>
 </html>
