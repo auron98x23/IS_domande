@@ -142,7 +142,7 @@
     
     let currentUser = null;
     let cloudErrorIds = new Set(); 
-    let cloudErrorCounts = {}; // Mappa per contare gli errori { "1": 5, "2": 1 }
+    let cloudErrorCounts = {}; 
     let isCloudMode = false;        
 
     let modeQ = 'ordered'; 
@@ -271,43 +271,33 @@
     async function addErrorToCloud(qId) {
         if (!currentUser) return;
         
-        // Aggiorna stato locale
         cloudErrorIds.add(qId);
-        
-        // Aggiorna contatore locale
         const currentCount = (cloudErrorCounts[qId] || 0) + 1;
         cloudErrorCounts[qId] = currentCount;
-        
         updateCloudButtonUI();
         
-        // Aggiorna badge UI se la domanda è visibile
+        // Aggiorna UI se la domanda è visibile
+        // NOTA: Con la nuova logica spoiler, l'aggiornamento dinamico è gestito 
+        // rigenerando il contenuto o aggiornando il div nascosto.
         const header = document.querySelector(`#q-${qId} .question-header`);
         if(header) {
-            // Se c'è già un badge, aggiornalo, altrimenti crealo
-            let countBadge = header.querySelector('.count-badge');
-            if(!countBadge) {
-                // Inseriamo il badge vicino all'ID o al testo
-                const badgeContainer = document.createElement('span');
-                badgeContainer.className = 'count-badge';
-                badgeContainer.style.marginLeft = '8px';
-                // Inseriscilo dopo il testo della domanda
-                header.children[0].appendChild(badgeContainer);
-                countBadge = badgeContainer;
+            // Cerchiamo il container delle info nascoste
+            let infoContainer = header.querySelector('.post-answer-reveal');
+            if(!infoContainer) {
+                // Se non esiste ancora (primo errore), creiamolo
+                infoContainer = document.createElement('div');
+                infoContainer.className = 'post-answer-reveal';
+                header.appendChild(infoContainer);
             }
-            countBadge.innerText = `❌ ${currentCount}`;
 
-            // Aggiungi bottone rimozione se non c'è
-            if(!header.querySelector('.btn-remove-cloud')) {
-                const btn = document.createElement('button');
-                btn.className = 'btn-remove-cloud';
-                btn.innerText = '✅ Rimuovi';
-                btn.onclick = () => window.manualRemove(qId);
-                header.appendChild(btn);
-            }
+            // Aggiorna contenuto: badge + pulsante
+            infoContainer.innerHTML = `
+                <span class="count-badge">❌ ${currentCount}</span>
+                <button class="btn-remove-cloud" onclick="window.manualRemove(${qId})">✅ Rimuovi</button>
+            `;
         }
 
         const userRef = doc(db, "users", currentUser.uid);
-        // Usa "increment" per sicurezza su aggiornamenti concorrenti
         await updateDoc(userRef, { 
             errorIds: arrayUnion(qId),
             [`errorCounts.${qId}`]: increment(1)
@@ -330,11 +320,10 @@
         }
 
         cloudErrorIds.delete(qId);
-        delete cloudErrorCounts[qId]; // Rimuovi conteggio locale
+        delete cloudErrorCounts[qId];
         updateCloudButtonUI();
 
         const userRef = doc(db, "users", currentUser.uid);
-        // Rimuoviamo ID dall'array E cancelliamo il campo del contatore
         await updateDoc(userRef, { 
             errorIds: arrayRemove(qId),
             [`errorCounts.${qId}`]: deleteField() 
@@ -514,18 +503,19 @@
             block.className = 'question-block';
             block.id = 'q-' + q.id;
             
-            // Logica bottoni header e badge contatore
-            let removeBtn = '';
-            let countBadgeHTML = '';
+            // Logica Cloud Info (nascosta finché non si risponde)
+            let cloudInfoHTML = '';
 
             if (cloudErrorIds.has(q.id)) {
-                removeBtn = `<button class="btn-remove-cloud" onclick="window.manualRemove(${q.id})">✅ Rimuovi</button>`;
-                
-                // Controlla il contatore
+                let countBadgeHTML = '';
                 const count = cloudErrorCounts[q.id] || 0;
                 if(count > 0) {
-                    countBadgeHTML = `<span class="count-badge" style="margin-left:8px;">❌ ${count}</span>`;
+                    countBadgeHTML = `<span class="count-badge">❌ ${count}</span>`;
                 }
+                const removeBtn = `<button class="btn-remove-cloud" onclick="window.manualRemove(${q.id})">✅ Rimuovi</button>`;
+                
+                // Raggruppiamo tutto nel div che verrà mostrato solo con .answered
+                cloudInfoHTML = `<div class="post-answer-reveal">${countBadgeHTML} ${removeBtn}</div>`;
             }
 
             block.innerHTML = `
@@ -533,9 +523,8 @@
                     <div class="header-left">
                         <span class="q-badge">#${q.id}</span>
                         <span>${q.q}</span>
-                        ${countBadgeHTML}
                     </div>
-                    ${removeBtn}
+                    ${cloudInfoHTML}
                 </div>`;
                 
             const optsDiv = document.createElement('div');
@@ -557,7 +546,7 @@
         const isFirstAttempt = !attempted.has(qId);
         attempted.add(qId);
 
-        // Marca come risposto (per rivelare ID se necessario)
+        // Aggiungiamo classe per rivelare ID e Cloud Info
         document.getElementById('q-' + qId).classList.add('answered');
 
         if(sel === corr) {
