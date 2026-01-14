@@ -1211,7 +1211,7 @@
             "K-Fold Cross Validation",
             "Monte Carlo Validation (Repeated Random Subsampling Validation)"
         ],
-        "correct": 1
+        "correct": 0
     },
     {
         "id": 109,
@@ -1443,7 +1443,7 @@
             "Deduction",
             "Induction"
         ],
-        "correct": 4
+        "correct": 3
     },
     {
         "id": 129,
@@ -1560,4 +1560,5 @@
         "correct": 0
     }
 ]
+
 
